@@ -1,12 +1,10 @@
-mydir = fileparts (mfilename ('fullpath'));        % where am I located
-addpath (mydir);
-
 logtrasform = true;
 scale = true;
 norm_zscore = false;
 pca_exc = false;
 perc_pca = 80;
 num_pca = 0;
+exec_SFS = true;
 
 %Training Set
 if not(exist('T'))
@@ -64,6 +62,7 @@ x = x(:,sel_features);
 t = t(:,sel_features);
 %}
 
+
 %{
 load('/Users/anthony/Dropbox/tesi/gpml-matlab-master/doc/sel_features_sparse.mat');
 sel_features = repInd;
@@ -78,15 +77,18 @@ ka = 30;
 %xx = rescale(x,'InputMin',colmin,'InputMax',colmax);
 
 [idx, dist] = knnsearch(x, x, 'k', k);%,'Distance','jaccard');
-sigma = log(dist(:,ka));
-%sigma = dist(:,ka);
+sigma = dist(:,ka);
+%sigma = log(dist(:,ka));
 %sigma = dist(:,ka);
 %sigma = rescale(sigma)+0.01;
 
+
+
+%{
 dist=distance_pearson(x,x);
 dist = sort(dist,2);
 sigma = exp(dist(:,ka));
-
+%}
 
 %% Scaled min max 
 all = [x;t];
@@ -126,9 +128,17 @@ end
 x = all(1:102,:);
 t = all(103:20402,:);
 
+if exec_SFS
+    sel_features = SFS(x,t,t_label,sigma);
+    x = x(:,sel_features);
+    t = t(:,sel_features);
+end
+
+%{
 dist=distance_pearson(x,x);
 dist = sort(dist,2);
 sigma = exp(dist(:,ka));
+%}
 
 modes={'mean','var','pred','ratio'};
 titles={'mean \mu_*','neg. variance -\sigma^2_*','log. predictive probability p(y=1|X,y,x_*)','log. moment ratio \mu_*/\sigma_*'};
@@ -190,89 +200,4 @@ writetable(t_score,'myData.xls');
 
 
 
-%auxiliary functions for kernel computation. Note, however, that
-%for efficiency reasons, faster implementations should be used
-%(see the code distributed along the textbook
-%"Gaussian Processes in Machine Learning", C. Rasmussen & C. Williams, 2006
-function [K,Ks,Kss]=se_kernel(svar,ls,x,y)
 
-    K   = svar*exp(-0.5*euclidean_distance2(x,x,ls));
-    
-    Ks = svar*exp(-0.5*euclidean_distance2(x,y,ls));  
-
-    Kss  = svar*ones(size(y,1),1);
-   
-    
-end
-    
-function distmat=euclidean_distance(x,y)
-    distmat = zeros( size(x,1), size(y,1) );
-    for i=1:size(x,1)
-        for j=1:size(y,1)
-            buff=(x(i,:)-y(j,:));   
-            distmat(i,j)=buff*buff';
-        end
-    end
-end
-
-function distmat=euclidean_distance2(x,y,ls)
-    distmat = zeros( size(x,1), size(y,1) );
-    for i=1:size(x,1)
-        for j=1:size(y,1)
-            buff=(x(i,:)-y(j,:));
-            buff=buff/ls(i);
-            distmat(i,j)=buff*buff';
-        end
-    end
-end
-
-function distmat=euclidean_distance2_norm(x,y,ls) %normalize
-    distmat = zeros( size(x,1), size(y,1) );
-    for i=1:size(x,1)
-        for j=1:size(y,1)            
-            buff=0.5*(std(x(i,:)-y(j,:))^2) / (std(x(i,:))^2+std(y(j,:))^2);
-            buff=buff/ls(i);
-            distmat(i,j)=buff;
-        end
-    end
-end
-
-function distmat=euclidean_distance2_pearson(x,y,ls)
-    distmat = zeros( size(x,1), size(y,1) );
-    for i=1:size(x,1)
-        for j=1:size(y,1)
-            R = corrcoef(x(i,:),y(j,:));
-            buff = (1-R(1,2))/ls(i);
-            %buff = 1-R(1,2);
-            %buff = pdist2(x(i,:),y(j,:),'correlation');
-            distmat(i,j)= buff;
-        end
-    end
-end
-
-function distmat=euclidean_distance3(x,y,ls)
-    distmat = zeros( size(x,1), size(y,1) );
-    for i=1:size(x,1)
-        for j=1:size(y,1)
-            buff=(x(i,:)-y(j,:));
-            buff=buff/ls(i);
-            distmat(i,j)=buff*buff';
-        end
-    end
-end
-%D(p(x|i),p(x|j ))+
-
-function distmat=distance_pearson(x,y)
-    distmat = zeros( size(x,1), size(y,1) );
-    for i=1:size(x,1)
-        for j=1:size(y,1)
-            R = corrcoef(x(i,:),y(j,:));
-            buff = (1-R(1,2));
-            %buff = R(1,2);
-            %buff = R(1,2);
-            %buff = 1-R(1,2);
-            %buff = pdist2(x(i,:),y(j,:),'correlation');
-            distmat(i,j)= buff;
-        end
-    end
-end
