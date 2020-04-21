@@ -1,10 +1,11 @@
 logtrasform = true;
 scale = true;
 norm_zscore = false;
-pca_exc = false;
+pca_exc = true;
 perc_pca = 80;
 num_pca = 0;
-exec_SFS = true;
+exec_SFS = false;
+load_featuresSFS = false;
 
 %Training Set
 if not(exist('T'))
@@ -54,13 +55,12 @@ for i=ia
 end
 
 %Sequential forward selection (SFS)
-%{
-load('sel_features.mat');
-
-sel_features = sort(sel_features);
-x = x(:,sel_features);
-t = t(:,sel_features);
-%}
+if load_featuresSFS
+    load('sel_features.mat');
+    sel_features = sort(sel_features);
+    x = x(:,sel_features);
+    t = t(:,sel_features);
+end
 
 
 %{
