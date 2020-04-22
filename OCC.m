@@ -6,6 +6,7 @@ perc_pca = 80;
 num_pca = 0;
 exec_SFS = false;
 load_featuresSFS = false;
+hyperSelection = true;
 
 %Training Set
 if not(exist('T'))
@@ -82,7 +83,9 @@ sigma = dist(:,ka);
 %sigma = dist(:,ka);
 %sigma = rescale(sigma)+0.01;
 
-
+if hyperSelection
+    sigma = hyperparameter_Selection(x);
+end
 
 %{
 dist=distance_pearson(x,x);
@@ -114,7 +117,7 @@ if pca_exc
         sum_explained = 0;
         idx = 0;
         while sum_explained < perc_pca
-            idx = idx + 1
+            idx = idx + 1;
             sum_explained = sum_explained + explained(idx);
         end
     else
@@ -162,7 +165,7 @@ for i=1:4
     plot(X,Y)
     xlabel('False positive rate') 
     ylabel('True positive rate')
-    title(sprintf('ROC %s',modes{i}))
+    title(sprintf('ROC %s',titles{i}))
     text(0.75,0.1,sprintf('AUC=%0.4f',AUC),'FontSize',14);
     
     min_score = min(score);

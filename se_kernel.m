@@ -1,9 +1,15 @@
 function [K,Ks,Kss]=se_kernel(svar,ls,x,y)
 
-    K   = svar*exp(-0.5*euclidean_distance_danapeer(x,x,ls));
+    if size(ls,1) == 1
+        K   = svar*exp(-0.5*euclidean_distance(x,x)/ls);
+        Ks = svar*exp(-0.5*euclidean_distance(x,y)/ls); 
+    end
     
-    Ks = svar*exp(-0.5*euclidean_distance_danapeer(x,y,ls));  
-
+    if size(ls,1) > 1
+        K   = svar*exp(-0.5*euclidean_distance_danapeer(x,x,ls));    
+        Ks = svar*exp(-0.5*euclidean_distance_danapeer(x,y,ls));  
+    end
+    
     Kss  = svar*ones(size(y,1),1);
    
 end
