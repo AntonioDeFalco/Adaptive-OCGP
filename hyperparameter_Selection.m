@@ -86,10 +86,10 @@ function sigma=hyperparameter_Selection(x)
         %[ymu ys2 mu_inter sigma_inter lp] = gp(hyp, @infLaplace, meanfunc, covfunc, likfunc, x, y, interior_samples, ones(n,1));
         %[ymu ys2 mu_edge sigma_edge lp] = gp(hyp, @infLaplace, meanfunc, covfunc, likfunc, x, y, edge_samples, zeros(n,1));
 
-        [K,Ks,Kss]=se_kernel(svar,L(j),interior_samples, ones(n,1));
+        [K,Ks,Kss]=se_kernel(svar,L(j),interior_samples, ones(n,1),'euclidean');
         sigma_inter=GPR_OCC(K,Ks,Kss,'var');
         mu_inter=GPR_OCC(K,Ks,Kss,'mean');
-        [K,Ks,Kss]=se_kernel(svar,L(j),edge_samples, zeros(n,1));
+        [K,Ks,Kss]=se_kernel(svar,L(j),edge_samples, zeros(n,1),'euclidean');
         sigma_edge=GPR_OCC(K,Ks,Kss,'var');
         mu_edge=GPR_OCC(K,Ks,Kss,'mean');
         

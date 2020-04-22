@@ -10,7 +10,7 @@ num_pca = 0;
 exec_SFS = false;
 load_featuresSFS = false;
 
-hyperSelection = false;
+hyperSelection = true;
 
 %Training Set
 if not(exist('T'))
@@ -116,7 +116,8 @@ var_pwr = sum(ins_pwr)/length(x) - (sum(x) / length(x)).^2;
 svar = exp(2*log(var_pwr));
 svar = mean(svar);
 
-[K,Ks,Kss]=se_kernel(svar,sigma,x,t);
+[K,Ks,Kss]=se_kernel(svar,sigma,x,t,'euclidean');
+%[K,Ks,Kss]=se_kernel(svar,sigma,x,t,'pearson');
 
 min_scores  = [];
 max_scores  = [];
@@ -138,8 +139,7 @@ for i=1:4
     min_scores = [min_scores,min_score];
     max_scores = [max_scores,max_score];
     scores = [scores,score];
-    AUCs = [AUCs,AUC];
-    
+    AUCs = [AUCs,AUC]; 
 end
 
 %mean = scores(:,1);
