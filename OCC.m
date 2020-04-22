@@ -3,14 +3,22 @@ logtrasform = true;
 scale = true;
 norm_zscore = false;
 
-pca_exc = true;
+pca_exc = false;
 perc_pca = 80;
-num_pca = 0;
 
 exec_SFS = false;
 load_featuresSFS = false;
 
-hyperSelection = true;
+%distance_mode = 'euclidean';
+distance_mode = 'pearson';
+
+%data_process = 'before';
+data_process = 'after';
+
+%kernel = 'scaled';   %scaled exponential similarity kernel "Similarity network fusion for aggregating data types on a genomic scale"
+kernel = 'adaptive'; %adaptive Gaussian kernel "MAGIC: A diffusion-based imputation method reveals gene-gene interactions in single-cell RNA-sequencing data"
+%kernel = 'hyperOCC'; %Hyperparameter for SE kernel "Hyperparameter Selection for Gaussian Process One-Class Classification"
+
 
 %Training Set
 if not(exist('T'))
@@ -76,16 +84,37 @@ x = x(:,sel_features);
 t = t(:,sel_features);
 %}
 
+if strcmp(data_process,'before')
+    [x,t] = data_processing(x,t,scale,norm_zscore,pca_exc,perc_pca);
+end
 
-ka = 30;
-[idx, dist] = knnsearch(x, x, 'k', ka);%,'Distance','jaccard');
-sigma = dist(:,ka);
-%sigma = log(dist(:,ka));
-%sigma = dist(:,ka);
-%sigma = rescale(sigma)+0.01;
+if strcmp(kernel,'adaptive')
+    
+    if strcmp(distance_mode,'euclidean')
+        ka = 30;
+        [idx, dist] = knnsearch(x, x, 'k', ka);%,'Distance','jaccard');
+        sigma = dist(:,ka);
+        %sigma = log(dist(:,ka));
+    else %pearson distance
+        dist=distance_pearson(x,x);
+        dist = sort(dist,2);
+        sigma = exp(dist(:,ka));
+    end
+    
+end
 
-if hyperSelection
+if strcmp(kernel,'hyperOCC')
     sigma = hyperparameter_Selection(x);
+end
+
+%Scaled Exponential Similarity Kernel
+if strcmp(kernel,'scaled')
+    k = 30;%number of neighbors, usually (10~30)
+    mu = 0.6; %hyperparameter, usually (0.3~0.8)
+    [~, dist] = knnsearch(x, x, 'k', k);
+    dist_xn = mean(dist,2);
+    [~, dist] = knnsearch(x, t, 'k', k);
+    dist_yn = mean(dist,2);
 end
 
 %{
@@ -94,7 +123,9 @@ dist = sort(dist,2);
 sigma = exp(dist(:,ka));
 %}
 
-[x,t] = data_processing(x,t,scale,norm_zscore,pca_exc,perc_pca);
+if strcmp(data_process,'after')
+    [x,t] = data_processing(x,t,scale,norm_zscore,pca_exc,perc_pca);
+end
 
 if exec_SFS
     sel_features = SFS(x,t,t_label,sigma);
@@ -102,22 +133,24 @@ if exec_SFS
     t = t(:,sel_features);
 end
 
-%{
-dist=distance_pearson(x,x);
-dist = sort(dist,2);
-sigma = exp(dist(:,ka));
-%}
-
 modes={'mean','var','pred','ratio'};
 titles={'mean \mu_*','neg. variance -\sigma^2_*','log. predictive probability p(y=1|X,y,x_*)','log. moment ratio \mu_*/\sigma_*'};
 
+%Signal Variance
 ins_pwr = x .^ 2;
 var_pwr = sum(ins_pwr)/length(x) - (sum(x) / length(x)).^2;
 svar = exp(2*log(var_pwr));
 svar = mean(svar);
 
-[K,Ks,Kss]=se_kernel(svar,sigma,x,t,'euclidean');
-%[K,Ks,Kss]=se_kernel(svar,sigma,x,t,'pearson');
+if strcmp(kernel,'scaled')
+    [K,Ks,Kss]=scaled_exp_similarity_kernel(svar,x,t,dist_xn,dist_yn,mu);
+else %hyperOCC or adaptive
+    if strcmp(distance_mode,'euclidean')
+        [K,Ks,Kss]=se_kernel(svar,sigma,x,t,'euclidean');
+    else %pearson distance
+        [K,Ks,Kss]=se_kernel(svar,sigma,x,t,'pearson');
+    end
+end
 
 min_scores  = [];
 max_scores  = [];

@@ -2,9 +2,9 @@ function sigma=hyperparameter_Selection(x)
 
     n=size(x,1);
     k=ceil(5 * log(n));
-    [ind_x_ij,D]=knnsearch(x,x,'K',k);
+    [ind_x_ij,~]=knnsearch(x,x,'K',k);
     ind_x_ij(:,1) = [];
-    [ll,D]=knnsearch(x,x,'K',n);
+    [~,D]=knnsearch(x,x,'K',n);
     D(:,1) = [];
 
     d_min = min(D(:));
@@ -63,7 +63,7 @@ function sigma=hyperparameter_Selection(x)
     gamma=(n/100)*5;
     m = ceil(gamma);
 
-    [eta_Sort,ind_sort] = sort(eta_i) ;
+    [~,ind_sort] = sort(eta_i) ;
 
     interior_samples = x(ind_sort(1:m),:);
     edge_samples = x(ind_sort(n-(m-1):n),:);
@@ -101,7 +101,7 @@ function sigma=hyperparameter_Selection(x)
         KL = [KL;val];
     end
 
-    [max_kl,ind_max_kl] = max(KL);
+    [~,ind_max_kl] = max(KL);
     sigma = L(ind_max_kl);
 
 end
