@@ -1,12 +1,16 @@
+
 logtrasform = true;
 scale = true;
 norm_zscore = false;
+
 pca_exc = true;
 perc_pca = 80;
 num_pca = 0;
+
 exec_SFS = false;
 load_featuresSFS = false;
-hyperSelection = true;
+
+hyperSelection = false;
 
 %Training Set
 if not(exist('T'))
@@ -46,6 +50,7 @@ x = [x,x_categ];
 t_categ = add_categorical_frequency(A);
 t = [t,t_categ];
 
+%LABEL
 n=size(x,1);
 y = [ones(1,n)]';
 [~,ia,~] = intersect(A(:,1), V(:,1));
@@ -71,13 +76,9 @@ x = x(:,sel_features);
 t = t(:,sel_features);
 %}
 
-k = 30;
-ka = 30;
-%colmin = min(x);
-%colmax = max(x);
-%xx = rescale(x,'InputMin',colmin,'InputMax',colmax);
 
-[idx, dist] = knnsearch(x, x, 'k', k);%,'Distance','jaccard');
+ka = 30;
+[idx, dist] = knnsearch(x, x, 'k', ka);%,'Distance','jaccard');
 sigma = dist(:,ka);
 %sigma = log(dist(:,ka));
 %sigma = dist(:,ka);
@@ -93,43 +94,7 @@ dist = sort(dist,2);
 sigma = exp(dist(:,ka));
 %}
 
-%% Scaled min max 
-all = [x;t];
-
-if scale
-    colmin = min(all);
-    colmax = max(all);
-    all = rescale(all,'InputMin',colmin,'InputMax',colmax);
-end
-
-%% Normalize z-score
-
-%
-if norm_zscore
-    all = normalize(all,2);  
-end
-%% PCA
-
-if pca_exc
-    [coeff,scoreTrain,~,~,explained,mu] = pca(all);
-
-    if perc_pca
-        sum_explained = 0;
-        idx = 0;
-        while sum_explained < perc_pca
-            idx = idx + 1;
-            sum_explained = sum_explained + explained(idx);
-        end
-    else
-        idx = num_pca;
-    end
-    all = scoreTrain(:,1:idx);
-end
-
-%%
-
-x = all(1:102,:);
-t = all(103:20402,:);
+[x,t] = data_processing(x,t,scale,norm_zscore,pca_exc,perc_pca);
 
 if exec_SFS
     sel_features = SFS(x,t,t_label,sigma);
