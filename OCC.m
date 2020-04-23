@@ -1,8 +1,8 @@
 addpath('./GPR_OCC');
 
 logtrasform = true;         %log transform of features with heavy-tailed distribution
-scale = true;               %
-norm_zscore = false;        %zscore normalization
+scale = true;               %min-max normalization
+norm_zscore = false;        %z-score normalization
 
 sparse_selection = true;    %perform Sparse Features Selection
 
@@ -13,7 +13,7 @@ exec_SFS = false;           %perform Sequential forward selection (SFS)
 load_featuresSFS = false;   %load the features selected with SFS
 
 distance_mode = 'euclidean'; %Use Euclidean distance    
-%distance_mode = 'pearson';
+%distance_mode = 'pearson';  %Use Pearson distance (1- Pearson correlation coefficient) 
 
 %data_process = 'before';   %process data before computing sigma 
 data_process = 'after';     %process data after computing sigma 
@@ -120,11 +120,6 @@ if strcmp(kernel,'scaled')
     dist_yn = mean(dist,2);
 end
 
-%{
-dist=distance_pearson(x,x);
-dist = sort(dist,2);
-sigma = exp(dist(:,ka));
-%}
 
 if strcmp(data_process,'after')
     [x,t] = data_processing(x,t,scale,norm_zscore,sparse_selection,pca_exc,perc_pca);
@@ -177,11 +172,6 @@ for i=1:4
     scores = [scores,score];
     AUCs = [AUCs,AUC]; 
 end
-
-%mean = scores(:,1);
-%var = scores(:,2);
-%pred = scores(:,3);
-%ratio = scores(:,4);
 
 AUC_mean = AUCs(1);
 AUC_var = AUCs(2);
