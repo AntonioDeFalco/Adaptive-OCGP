@@ -1,16 +1,21 @@
+addpath('./SMRS_v1.0');
+addpath('./GPR_OCC');
+
 
 logtrasform = true;
 scale = true;
 norm_zscore = false;
 
-pca_exc = false;
+sparse_selection = true;
+
+pca_exc = true;
 perc_pca = 80;
 
 exec_SFS = false;
 load_featuresSFS = false;
 
-%distance_mode = 'euclidean';
-distance_mode = 'pearson';
+distance_mode = 'euclidean';
+%distance_mode = 'pearson';
 
 %data_process = 'before';
 data_process = 'after';
@@ -85,7 +90,7 @@ t = t(:,sel_features);
 %}
 
 if strcmp(data_process,'before')
-    [x,t] = data_processing(x,t,scale,norm_zscore,pca_exc,perc_pca);
+    [x,t] = data_processing(x,t,scale,norm_zscore,sparse_selection,pca_exc,perc_pca);
 end
 
 if strcmp(kernel,'adaptive')
@@ -124,7 +129,7 @@ sigma = exp(dist(:,ka));
 %}
 
 if strcmp(data_process,'after')
-    [x,t] = data_processing(x,t,scale,norm_zscore,pca_exc,perc_pca);
+    [x,t] = data_processing(x,t,scale,norm_zscore,sparse_selection,pca_exc,perc_pca);
 end
 
 if exec_SFS

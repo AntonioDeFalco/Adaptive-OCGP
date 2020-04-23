@@ -1,4 +1,4 @@
-function [x_new,y_new]=data_processing(x,y,scale,norm_zscore,pca_exc,perc_pca)
+function [x_new,y_new]=data_processing(x,y,scale,norm_zscore,sparse_selection,pca_exc,perc_pca)
 
     x_size = size(x,1);
     y_size = size(y,1);
@@ -16,10 +16,33 @@ function [x_new,y_new]=data_processing(x,y,scale,norm_zscore,pca_exc,perc_pca)
     if norm_zscore
         all = normalize(all,2);  
     end
+    
+    %%
+    if sparse_selection
+
+        % input the regularization parameter
+        alpha = 20; % typically alpha in [2,20]
+
+        % if desired to reduce data dimension by PCA enter the projection
+        % dimension r, else r = 0 for using the data without any projections
+        r = 0;%4;
+
+        % report information about iterations
+        verbose = true;
+
+        % find the representatives via sparse modelling
+        [repInd,~] = smrs(all,alpha,r,verbose);
+
+        sel_features = repInd;
+
+        all = all(:,sel_features);
+    
+    end
+
     %% PCA
 
     if pca_exc
-        [coeff,scoreTrain,~,~,explained,mu] = pca(all);
+        [~,scoreTrain,~,~,explained,~] = pca(all);
 
         if perc_pca
             sum_explained = 0;
