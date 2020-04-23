@@ -10,48 +10,51 @@
 %--------------------------------------------------------------------------
 
 function [repInd,C] = smrs(Y,alpha,r,verbose)
-%addpath('../../ICA/FastICA_25'); 
 
-if (nargin < 2)
-    alpha = 5;
+    addpath('../FAST_ICA/'); 
+
+    if (nargin < 2)
+        alpha = 5;
+    end
+    if (nargin < 3)
+        r = 0;
+    end
+    if (nargin < 4)
+        verbose = true;
+    end
+
+    q = 2;
+    regParam = [alpha alpha];
+    affine = true;
+    thr = 1 * 10^-7;
+    maxIter = 5000;
+
+
+    thrS = 0.99; 
+
+    thrP = 0.999; %0.95
+
+
+    N = size(Y,2);
+
+    Y = Y - repmat(mean(Y,2),1,N);
+
+    if (r >= 1)
+        [~,S,V] = svd(Y,0);
+        r = min(r,size(V,1));
+        Y = S(1:r,1:r) * V(:,1:r)';
+    end
+
+    %[Y_ica] = fastica(Y, 'numOfIC', r, 'g', 'tanh');
+
+    Y_ica = fastICA(Y,r);
+
+    %[Y_ica] = fastICA(Y,r);
+
+    C = almLasso_mat_func(Y_ica,affine,regParam,q,thr,maxIter,verbose);
+
+    %C = almLasso_mat_func(Y,affine,regParam,q,thr,maxIter,verbose);
+
+    sInd = findRep(C,thrS,q);
+    repInd = rmRep(sInd,Y,thrP);
 end
-if (nargin < 3)
-    r = 0;
-end
-if (nargin < 4)
-    verbose = true;
-end
-
-q = 2;
-regParam = [alpha alpha];
-affine = true;
-thr = 1 * 10^-7;
-maxIter = 5000;
-
-
-thrS = 0.99; 
-
-thrP = 0.999; %0.95
-
-
-N = size(Y,2);
-
-Y = Y - repmat(mean(Y,2),1,N);
-
-if (r >= 1)
-    [~,S,V] = svd(Y,0);
-    r = min(r,size(V,1));
-    Y = S(1:r,1:r) * V(:,1:r)';
-end
-
-%[Y_ica] = fastica(Y, 'numOfIC', r, 'g', 'tanh');
-
-%Y_ica = fastICA(Y,r);
-%[Y_ica] = fastICA(Y,r);
-
-%C = almLasso_mat_func(Y_ica,affine,regParam,q,thr,maxIter,verbose);
-
-C = almLasso_mat_func(Y,affine,regParam,q,thr,maxIter,verbose);
-
-sInd = findRep(C,thrS,q);
-repInd = rmRep(sInd,Y,thrP);

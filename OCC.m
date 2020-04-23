@@ -1,27 +1,25 @@
-addpath('./SMRS_v1.0');
 addpath('./GPR_OCC');
 
+logtrasform = true;         %log transform of features with heavy-tailed distribution
+scale = true;               %
+norm_zscore = false;        %zscore normalization
 
-logtrasform = true;
-scale = true;
-norm_zscore = false;
+sparse_selection = true;    %perform Sparse Features Selection
 
-sparse_selection = true;
+pca_exc = true;             %perform PCA 
+perc_pca = 80;              %perform PCA
 
-pca_exc = true;
-perc_pca = 80;
+exec_SFS = false;           %perform Sequential forward selection (SFS) 
+load_featuresSFS = false;   %load the features selected with SFS
 
-exec_SFS = false;
-load_featuresSFS = false;
-
-distance_mode = 'euclidean';
+distance_mode = 'euclidean'; %Use Euclidean distance    
 %distance_mode = 'pearson';
 
-%data_process = 'before';
-data_process = 'after';
+%data_process = 'before';   %process data before computing sigma 
+data_process = 'after';     %process data after computing sigma 
 
 %kernel = 'scaled';   %scaled exponential similarity kernel "Similarity network fusion for aggregating data types on a genomic scale"
-kernel = 'adaptive'; %adaptive Gaussian kernel "MAGIC: A diffusion-based imputation method reveals gene-gene interactions in single-cell RNA-sequencing data"
+kernel = 'adaptive';  %adaptive Gaussian kernel "MAGIC: A diffusion-based imputation method reveals gene-gene interactions in single-cell RNA-sequencing data"
 %kernel = 'hyperOCC'; %Hyperparameter for SE kernel "Hyperparameter Selection for Gaussian Process One-Class Classification"
 
 
@@ -114,8 +112,8 @@ end
 
 %Scaled Exponential Similarity Kernel
 if strcmp(kernel,'scaled')
-    k = 30;%number of neighbors, usually (10~30)
-    mu = 0.6; %hyperparameter, usually (0.3~0.8)
+    k = 30;     %number of neighbors, usually (10~30)
+    mu = 0.6;   %hyperparameter, usually (0.3~0.8)
     [~, dist] = knnsearch(x, x, 'k', k);
     dist_xn = mean(dist,2);
     [~, dist] = knnsearch(x, t, 'k', k);
