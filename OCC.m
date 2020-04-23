@@ -1,5 +1,7 @@
 addpath('./GPR_OCC');
 
+%% OPTIONS 
+
 logtrasform = true;         %log transform of features with heavy-tailed distribution
 scale = true;               %min-max normalization
 norm_zscore = false;        %z-score normalization
@@ -22,7 +24,7 @@ data_process = 'after';     %process data after computing sigma
 kernel = 'adaptive';  %adaptive Gaussian kernel "MAGIC: A diffusion-based imputation method reveals gene-gene interactions in single-cell RNA-sequencing data"
 %kernel = 'hyperOCC'; %Hyperparameter for SE kernel "Hyperparameter Selection for Gaussian Process One-Class Classification"
 
-
+%% Load Dataset 
 %Training Set
 if not(exist('T'))
     load('T.mat')
@@ -70,6 +72,8 @@ t_label = zeros(1,n)';
 for i=ia
     t_label(i) = 1;
 end
+
+%% Data processing
 
 %Sequential forward selection (SFS)
 if load_featuresSFS
@@ -131,8 +135,7 @@ if exec_SFS
     t = t(:,sel_features);
 end
 
-modes={'mean','var','pred','ratio'};
-titles={'mean \mu_*','neg. variance -\sigma^2_*','log. predictive probability p(y=1|X,y,x_*)','log. moment ratio \mu_*/\sigma_*'};
+%% Kernel
 
 %Signal Variance
 ins_pwr = x .^ 2;
@@ -149,6 +152,10 @@ else %hyperOCC or adaptive
         [K,Ks,Kss]=se_kernel(svar,sigma,x,t,'pearson');
     end
 end
+
+%% GP OCC
+modes={'mean','var','pred','ratio'};
+titles={'mean \mu_*','neg. variance -\sigma^2_*','log. predictive probability p(y=1|X,y,x_*)','log. moment ratio \mu_*/\sigma_*'};
 
 min_scores  = [];
 max_scores  = [];
