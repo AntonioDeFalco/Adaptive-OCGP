@@ -6,7 +6,7 @@ logtrasform = true;         %log transform of features with heavy-tailed distrib
 scale = true;               %min-max normalization
 norm_zscore = false;        %z-score normalization
 
-sparse_selection = true;    %perform Sparse Features Selection
+sparse_selection = false;    %perform Sparse Features Selection
 
 pca_exc = true;             %perform PCA 
 perc_pca = 80;              %perform PCA
@@ -25,6 +25,7 @@ kernel = 'adaptive';  %adaptive Gaussian kernel "MAGIC: A diffusion-based imputa
 %kernel = 'hyperOCC'; %Hyperparameter for SE kernel "Hyperparameter Selection for Gaussian Process One-Class Classification"
 
 %% Load Dataset 
+
 %Training Set
 if not(exist('T'))
     load('T.mat')
