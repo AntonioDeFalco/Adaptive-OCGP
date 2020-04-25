@@ -1,4 +1,4 @@
-function sel_features=SFS(x,t,t_label,sigm)
+function sel_features=SFS(x,t,t_label,sigm,distance_mode)
 
 x_old = x;
 t_old = t;
@@ -21,7 +21,7 @@ last_AUC = 0;
             svar = exp(2*log(var_pwr));
             svar = mean(svar);
 
-            [K,Ks,Kss]=se_kernel(svar,sigm,x,t);
+            [K,Ks,Kss]=se_kernel(svar,sigm,x,t,distance_mode);
 
             score=GPR_OCC(K,Ks,Kss,'mean');
             [X,Y,~,AUC] = perfcurve(t_label,score,1);

@@ -19,7 +19,12 @@ function score=GPR_OCC(K,Ks,Kss,mode,kernel_centering)
     K=K+noise*eye(size(K));Kss=Kss+noise*ones(size(Kss));
     
     L = chol(K)';
-    %L = sqrtm(K)';
+
+    %[L,flag] = chol(K)';
+    %if flag ~= 0
+    %    L = sqrtm(K)';
+    %end
+    
     alpha = L'\(L\ones(size(K,1),1));
 
     if strcmp(mode,'mean')

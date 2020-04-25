@@ -47,13 +47,13 @@ function [repInd,C] = smrs(Y,alpha,r,verbose)
 
     %[Y_ica] = fastica(Y, 'numOfIC', r, 'g', 'tanh');
 
-    Y_ica = fastICA(Y,r);
+    %Y_ica = fastICA(Y,r);
 
     %[Y_ica] = fastICA(Y,r);
 
-    C = almLasso_mat_func(Y_ica,affine,regParam,q,thr,maxIter,verbose);
+    %C = almLasso_mat_func(Y_ica,affine,regParam,q,thr,maxIter,verbose);
 
-    %C = almLasso_mat_func(Y,affine,regParam,q,thr,maxIter,verbose);
+    C = almLasso_mat_func(Y,affine,regParam,q,thr,maxIter,verbose);
 
     sInd = findRep(C,thrS,q);
     repInd = rmRep(sInd,Y,thrP);

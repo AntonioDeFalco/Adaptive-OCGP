@@ -80,6 +80,7 @@ function sigma=hyperparameter_Selection(x)
     var_pwr = sum(ins_pwr)/length(x) - (sum(x) / length(x)).^2;
     svar = exp(2*log(var_pwr));
     svar = mean(svar);
+    
 
     for j=1:size(L,2)  
         %hyp.cov = L(j);

@@ -1,5 +1,24 @@
 function [x_new,y_new]=data_processing(x,y,scale,norm_zscore,sparse_selection,pca_exc,perc_pca)
 
+    %% Normalize z-score
+
+    %
+    %if norm_zscore
+    %    all = normalize(all,2);  
+    %end
+    
+    if norm_zscore
+
+            [Ztrain,tr_mu,tr_sigma] = zscore(x); % Standardize the training data
+            tr_sigma(tr_sigma==0) = 1;
+
+            Ztest = (y-tr_mu)./tr_sigma; 
+
+            x = Ztrain;
+            y = Ztest;
+    end
+
+    %%
     x_size = size(x,1);
     y_size = size(y,1);
     all = [x;y];
@@ -10,13 +29,7 @@ function [x_new,y_new]=data_processing(x,y,scale,norm_zscore,sparse_selection,pc
         all = rescale(all,'InputMin',colmin,'InputMax',colmax);
     end
 
-    %% Normalize z-score
-
-    %
-    if norm_zscore
-        all = normalize(all,2);  
-    end
-    
+          
     %%
     if sparse_selection
 

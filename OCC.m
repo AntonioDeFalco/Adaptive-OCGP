@@ -1,4 +1,5 @@
 addpath('./GPR_OCC');
+addpath('./SMRS_v1.0');
 
 %% OPTIONS 
 
@@ -12,7 +13,7 @@ pca_exc = true;             %perform PCA
 perc_pca = 80;              %perform PCA
 
 exec_SFS = false;           %perform Sequential forward selection (SFS) 
-load_featuresSFS = false;   %load the features selected with SFS
+load_featuresSFS = true;   %load the features selected with SFS
 
 distance_mode = 'euclidean'; %Use Euclidean distance    
 %distance_mode = 'pearson';  %Use Pearson distance (1- Pearson correlation coefficient) 
@@ -23,6 +24,9 @@ data_process = 'after';     %process data after computing sigma
 %kernel = 'scaled';   %scaled exponential similarity kernel "Similarity network fusion for aggregating data types on a genomic scale"
 kernel = 'adaptive';  %adaptive Gaussian kernel "MAGIC: A diffusion-based imputation method reveals gene-gene interactions in single-cell RNA-sequencing data"
 %kernel = 'hyperOCC'; %Hyperparameter for SE kernel "Hyperparameter Selection for Gaussian Process One-Class Classification"
+
+log_sigma = true;     %Sigma transform     
+KA_adaptive_kernel = 30;
 
 %% Load Dataset 
 
@@ -99,14 +103,17 @@ end
 if strcmp(kernel,'adaptive')
     
     if strcmp(distance_mode,'euclidean')
-        ka = 30;
-        [idx, dist] = knnsearch(x, x, 'k', ka);%,'Distance','jaccard');
-        sigma = dist(:,ka);
-        %sigma = log(dist(:,ka));
+        %ka = 30;
+        [idx, dist] = knnsearch(x, x, 'k', KA_adaptive_kernel);%,'Distance','jaccard');
+        if log_sigma
+            sigma = log(dist(:,KA_adaptive_kernel));
+        else
+            sigma = dist(:,KA_adaptive_kernel);
+        end     
     else %pearson distance
         dist=distance_pearson(x,x);
         dist = sort(dist,2);
-        sigma = exp(dist(:,ka));
+        sigma = exp(dist(:,KA_adaptive_kernel));
     end
     
 end
@@ -143,6 +150,8 @@ ins_pwr = x .^ 2;
 var_pwr = sum(ins_pwr)/length(x) - (sum(x) / length(x)).^2;
 svar = exp(2*log(var_pwr));
 svar = mean(svar);
+
+svar = 0.0045;
 
 if strcmp(kernel,'scaled')
     [K,Ks,Kss]=scaled_exp_similarity_kernel(svar,x,t,dist_xn,dist_yn,mu);
