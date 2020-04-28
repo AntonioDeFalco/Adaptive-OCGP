@@ -1,6 +1,8 @@
 addpath('./SMRS_v1.0');
 addpath('./GPR_OCC');
 
+delete myData.xls
+
 %% OPTIONS 
 
 logtrasform = false;         %log transform of features with heavy-tailed distribution
@@ -22,11 +24,11 @@ data_process = 'before';   %process data before computing sigma
 %data_process = 'after';     %process data after computing sigma 
 
 %kernel = 'scaled';   %scaled exponential similarity kernel "Similarity network fusion for aggregating data types on a genomic scale"
-kernel = 'adaptive';  %adaptive Gaussian kernel "MAGIC: A diffusion-based imputation method reveals gene-gene interactions in single-cell RNA-sequencing data"
-%kernel = 'hyperOCC'; %Hyperparameter for SE kernel "Hyperparameter Selection for Gaussian Process One-Class Classification"
+%kernel = 'adaptive';  %adaptive Gaussian kernel "MAGIC: A diffusion-based imputation method reveals gene-gene interactions in single-cell RNA-sequencing data"
+kernel = 'hyperOCC'; %Hyperparameter for SE kernel "Hyperparameter Selection for Gaussian Process One-Class Classification"
 
 log_sigma = false;     %Sigma transform     
-ka_adaptive_kernel = 5;
+KA_adaptive_kernel = 2;
 
 %% Load Dataset 
 
@@ -34,7 +36,7 @@ tot_table = table();
 
 data_folder = dir('./UCI_OCC_DATASETS/');
 
-for j = 3:17 %[3:5,7:12,14,16:17] % %[3:5,8:11,16:17] 
+for j = 4:12 %[3:5,7:12,14,16:17] % %[3:5,8:11,16:17] 
     
     AUC_mean = [];
     AUC_var = [];
@@ -116,11 +118,11 @@ for j = 3:17 %[3:5,7:12,14,16:17] % %[3:5,8:11,16:17]
 
             if strcmp(distance_mode,'euclidean')
                 %ka = 30;
-                [idx, dist] = knnsearch(x, x, 'k', ka_adaptive_kernel);%,'Distance','jaccard');
+                [idx, dist] = knnsearch(x, x, 'k', KA_adaptive_kernel);%,'Distance','jaccard');
                 if log_sigma
-                    sigma = log(dist(:,ka_adaptive_kernel));
+                    sigma = log(dist(:,KA_adaptive_kernel));
                 else
-                    sigma = dist(:,ka_adaptive_kernel);
+                    sigma = dist(:,KA_adaptive_kernel);
                 end     
             else %pearson distance
                 dist=distance_pearson(x,x);
@@ -174,7 +176,7 @@ for j = 3:17 %[3:5,7:12,14,16:17] % %[3:5,8:11,16:17]
         svar = mean(svar);
 
         svar = 0.000045;
-
+        
         if strcmp(kernel,'scaled')
             [K,Ks,Kss]=scaled_exp_similarity_kernel(svar,x,t,dist_xn,dist_yn,mu);
         else %hyperOCC or adaptive
