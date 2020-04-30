@@ -13,6 +13,9 @@ pca_exc = true;             %perform PCA
 perc_pca = 80;              %perform PCA
 
 exec_SFS = false;           %perform Sequential forward selection (SFS) 
+exec_SBS = false;  
+score_mode = 'mean';
+%score_mode = 'var';
 load_featuresSFS = true;   %load the features selected with SFS
 
 distance_mode = 'euclidean'; %Use Euclidean distance    
@@ -113,6 +116,7 @@ if strcmp(kernel,'adaptive')
     else %pearson distance
         dist=distance_pearson(x,x);
         dist = sort(dist,2);
+        %sigma = dist(:,KA_adaptive_kernel);
         sigma = exp(dist(:,KA_adaptive_kernel));
     end
     
@@ -132,16 +136,22 @@ if strcmp(kernel,'scaled')
     dist_yn = mean(dist,2);
 end
 
+if exec_SFS
+    sel_features = SFS(x,t,t_label,sigma,distance_mode,score_mode);
+    x = x(:,sel_features);
+    t = t(:,sel_features);
+end
+
+if exec_SBS
+    sel_features = SBS(x,t,t_label,sigma,distance_mode,score_mode);
+    x = x(:,sel_features);
+    t = t(:,sel_features);
+end
 
 if strcmp(data_process,'after')
     [x,t] = data_processing(x,t,scale,norm_zscore,sparse_selection,pca_exc,perc_pca);
 end
 
-if exec_SFS
-    sel_features = SFS(x,t,t_label,sigma);
-    x = x(:,sel_features);
-    t = t(:,sel_features);
-end
 
 %% Kernel
 

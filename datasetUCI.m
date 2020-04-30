@@ -6,8 +6,8 @@ delete myData.xls
 %% OPTIONS 
 
 logtrasform = false;         %log transform of features with heavy-tailed distribution
-scale = false;               %min-max normalization
-norm_zscore = true;        %z-score normalization
+scale = true;               %min-max normalization
+norm_zscore = false;        %z-score normalization
 
 sparse_selection = false;    %perform Sparse Features Selection
 
@@ -17,18 +17,18 @@ perc_pca = 80;              %perform PCA
 exec_SFS = false;           %perform Sequential forward selection (SFS) 
 load_featuresSFS = false;   %load the features selected with SFS
 
-distance_mode = 'euclidean'; %Use Euclidean distance    
-%distance_mode = 'pearson';  %Use Pearson distance (1- Pearson correlation coefficient) 
+%distance_mode = 'euclidean'; %Use Euclidean distance    
+distance_mode = 'pearson';  %Use Pearson distance (1- Pearson correlation coefficient) 
 
 data_process = 'before';   %process data before computing sigma 
 %data_process = 'after';     %process data after computing sigma 
 
 %kernel = 'scaled';   %scaled exponential similarity kernel "Similarity network fusion for aggregating data types on a genomic scale"
-%kernel = 'adaptive';  %adaptive Gaussian kernel "MAGIC: A diffusion-based imputation method reveals gene-gene interactions in single-cell RNA-sequencing data"
-kernel = 'hyperOCC'; %Hyperparameter for SE kernel "Hyperparameter Selection for Gaussian Process One-Class Classification"
+kernel = 'adaptive';  %adaptive Gaussian kernel "MAGIC: A diffusion-based imputation method reveals gene-gene interactions in single-cell RNA-sequencing data"
+%kernel = 'hyperOCC'; %Hyperparameter for SE kernel "Hyperparameter Selection for Gaussian Process One-Class Classification"
 
 log_sigma = false;     %Sigma transform     
-KA_adaptive_kernel = 2;
+KA_adaptive_kernel = 15;
 
 %% Load Dataset 
 
@@ -85,6 +85,8 @@ for j = 4:12 %[3:5,7:12,14,16:17] % %[3:5,8:11,16:17]
 
         n = size(x,1);
         y = [ones(1,n)]';
+        
+        %KA_adaptive_kernel = floor((n/100)*2)
 
         t_label = [ones(1,size(testInd,2))';zeros(1,size(class2,1))'];
 
@@ -123,11 +125,12 @@ for j = 4:12 %[3:5,7:12,14,16:17] % %[3:5,8:11,16:17]
                     sigma = log(dist(:,KA_adaptive_kernel));
                 else
                     sigma = dist(:,KA_adaptive_kernel);
+                    %sigma = mean(dist(:,[2:KA_adaptive_kernel]),2);
                 end     
             else %pearson distance
                 dist=distance_pearson(x,x);
                 dist = sort(dist,2);
-                sigma = exp(dist(:,ka));
+                sigma = exp(dist(:,KA_adaptive_kernel));
             end
 
         end
@@ -162,7 +165,7 @@ for j = 4:12 %[3:5,7:12,14,16:17] % %[3:5,8:11,16:17]
         end
 
         if exec_SFS
-            sel_features = SFS(x,t,t_label,sigma,distance_mode);
+            sel_features = SFS(x,t,t_label,sigma,distance_mode,score_mode);
             x = x(:,sel_features);
             t = t(:,sel_features);
         end
@@ -208,6 +211,7 @@ for j = 4:12 %[3:5,7:12,14,16:17] % %[3:5,8:11,16:17]
             %ylabel('True positive rate')
             %title(sprintf('ROC %s',titles{i}))
             %text(0.75,0.1,sprintf('AUC=%0.4f',AUC),'FontSize',14);
+            AUC
             AUCs = [AUCs,AUC]; 
         end
 
