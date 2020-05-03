@@ -51,5 +51,7 @@ for i=1:3
     line(x_s, mu_s);
     plot(x_obs, y_obs,'r*')
     title(text)
+    xlabel('x_*') 
+    ylabel('f_*') 
     legend('training samples','variance','mean')
 end
