@@ -2,9 +2,11 @@
 
 This repository contains an implementation of Gaussian Processes applied to a One Class Classification (OCC) problem, starting from Kemmler et al. [1].
 A new method is proposed for selecting the lenght-scale hyperparameter in the SE kernel obtaining an adaptive kernel. It is compared with the only proposed method for the hyperparameter selection for OCC of Xiao et al. [2]. 
-The main problem addressed is the selection and prioritization of drug targets, obtain AUC 0.90, but we confirm the validity of the proposed method on the following datasets.
+The main problem addressed is the selection and prioritization of drug targets, the OCC.m script contains testing on DrugTarget dataset with which we get AUC 0.90, but we confirm the validity of the proposed method on the following datasets.
 
-# UCI Benchmars [url](http://homepage.tudelft.nl/n9d04/occ/index.html)
+# UCI Benchmars 
+
+The datasetUCI.m script contains testing on UCI datasets downloaded from [url](http://homepage.tudelft.nl/n9d04/occ/index.html)
 
 AUC scores for mean and variance on UCI datasets. At left the results with Xiao et al. hyperparameter selection, on the right the results of our proposed method.
 
@@ -20,6 +22,10 @@ AUC scores for mean and variance on UCI datasets. At left the results with Xiao 
 | Vehicle    |         0,5183        |           0,5714          |        0,7965        |          0,8656          |
 | Waveform   |         0,7497        |           0,8004          |        0,7808        |          0,8167          |
 | AVERAGE    |         0,7982        |           0,8169          |        0,8482        |          0,8549          |
+
+# 1-D OCC 
+
+The oneD_demo.m script contains a demo of the comparison in the case of a one-dimensional OCC setting, with a fixed hyperparameter and our adaptive kernel.
 
 # Cite:
 
