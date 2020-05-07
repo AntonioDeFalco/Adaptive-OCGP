@@ -14,7 +14,7 @@ y_obs = ones(1,size(x_obs,1))';
 
 x_s = linspace(-8, 8, 80)';
 
-[x_obs,x_s] = data_processing(x_obs,x_s,false,true,false,false,0);
+%[x_obs,x_s] = data_processing(x_obs,x_s,false,true,false,false,0);
 
 %svar = 1.0;
 svar = 0.3;
