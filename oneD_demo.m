@@ -58,14 +58,14 @@ for i=1:4
     mu_s = Ks' * alpha;  
     
     cov_s = Kss - Ks'*inv(K)*Ks;
-    stds = diag(cov_s);
+    var = diag(cov_s);
     
     figure()
     hold on;
    
     err_xs = [x_s; flip(x_s, 1)];
 
-    err_ys = [mu_s + 2 * stds; flip(mu_s - 2 * stds, 1)];
+    err_ys = [mu_s + 2 * var; flip(mu_s - 2 * var, 1)];
 
     patch(err_xs, err_ys, 'yellow');
 
