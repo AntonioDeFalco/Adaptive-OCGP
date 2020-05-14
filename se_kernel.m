@@ -6,10 +6,10 @@ function [K,Ks,Kss]=se_kernel(svar,ls,x,y,dist)
             Ks = svar*exp(-0.5*euclidean_distance(x,y)/ls); 
         end
 
-        if size(ls,1) > 1
-            K   = svar*exp(-0.5*euclidean_distance(x,x,ls));
-            K = K + K';
-            Ks = svar*exp(-0.5*euclidean_distance(x,y,ls));  
+        if size(ls,1) > 1      
+            K = svar*exp(-0.5*euclidean_distance(x,x,ls));           
+            K = (K + K')/2; %Symmetrization
+            Ks = svar*exp(-0.5*euclidean_distance(x,y,ls));
         end
     elseif strcmp(dist,'pearson')  
         if size(ls,1) == 1
@@ -19,7 +19,7 @@ function [K,Ks,Kss]=se_kernel(svar,ls,x,y,dist)
 
         if size(ls,1) > 1
             K   = svar*exp(-0.5*distance_pearson(x,x,ls));
-            K = K + K';
+            K = (K + K')/2; %Symmetrization
             Ks = svar*exp(-0.5*distance_pearson(x,y,ls));  
         end
     end
