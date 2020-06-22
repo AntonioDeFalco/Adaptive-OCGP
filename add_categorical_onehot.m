@@ -1,3 +1,5 @@
+%One-hot encoding for categorical features
+
 function x=add_categorical_onehot(T,category_add)
     x = [];
 

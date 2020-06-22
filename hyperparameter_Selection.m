@@ -1,3 +1,5 @@
+%Implementation of Xiao et al. "Hyperparameter  selection  for  gaussian processone-class classification". IEEE Transactions on Neural Networks and Learning Systems, 2015
+
 function sigma=hyperparameter_Selection(x)
 
     n=size(x,1);
@@ -7,11 +9,11 @@ function sigma=hyperparameter_Selection(x)
     [~,D]=knnsearch(x,x,'K',n);
     D(:,1) = [];
 
+    %Minimum and maximum distance between samples
     d_min = min(D(:));
     d_max = max(D(:));
 
     logd_min = log(d_min);
-    %logd_min = log(0);
     logd_max = log(d_max);
 
     %Candidate set
@@ -32,20 +34,17 @@ function sigma=hyperparameter_Selection(x)
         vu_ij=[];
         for j=1:k-1  
             val = (x_ij{i,j} - x(i,:))/(norm(x_ij{i,j} - x(i,:)));
-            %val = (x(x_ij(i,j),:) - x(i,:))/(norm(x(x_ij(i,j),:)) - x(i,:));
             vu_ij = [vu_ij;val];
         end
             vn_i=[vn_i;sum(vu_ij)];
      end
 
-    %vu(i,j)=(x(:,x_ij(i,j)) - x(:,i))/(norm(x(:,x_ij(i,j)) - x(:,i)))
     teta_ij=[];
 
     for i=1:n
         teta_j = [];
         for j=1:k-1 
                 val = dot((x_ij{i,j} - x(i,:))',vn_i(i,:));
-                %val = (x(x_ij(i,j),:) - x(i,:))'*vn_i(i,:);
                 teta_j = [teta_j,val];
         end
         teta_ij = [teta_ij;teta_j];
@@ -58,8 +57,7 @@ function sigma=hyperparameter_Selection(x)
             eta_i = [eta_i;val];
     end
 
-    %x2 = -ones(size(x1,1),size(x1,2));
-
+    %Percentage of internal and edge samples
     gamma=(n/100)*5;
     m = ceil(gamma);
 
@@ -68,24 +66,14 @@ function sigma=hyperparameter_Selection(x)
     interior_samples = x(ind_sort(1:m),:);
     edge_samples = x(ind_sort(n-(m-1):n),:);
 
-
-    y = [ones(1,n)]';
-    meanfunc = @meanConst; hyp.mean = 0;
-    covfunc = @covSEisoU; 
-    likfunc = @likErf;
-
     KL = [];
     
     ins_pwr = x .^ 2;
     var_pwr = sum(ins_pwr)/length(x) - (sum(x) / length(x)).^2;
     svar = exp(2*log(var_pwr));
-    svar = mean(svar);
-    
+    svar = mean(svar);    
 
     for j=1:size(L,2)  
-        %hyp.cov = L(j);
-        %[ymu ys2 mu_inter sigma_inter lp] = gp(hyp, @infLaplace, meanfunc, covfunc, likfunc, x, y, interior_samples, ones(n,1));
-        %[ymu ys2 mu_edge sigma_edge lp] = gp(hyp, @infLaplace, meanfunc, covfunc, likfunc, x, y, edge_samples, zeros(n,1));
 
         [K,Ks,Kss]=se_kernel(svar,L(j),interior_samples, ones(n,1),'euclidean');
         sigma_inter=GPR_OCC(K,Ks,Kss,'var');

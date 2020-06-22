@@ -1,3 +1,5 @@
+%Frequency encoding for categorical features
+
 function x=add_categorical_frequency(T)
     x = [];
 

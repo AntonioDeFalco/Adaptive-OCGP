@@ -3,33 +3,35 @@ addpath('./SMRS_v1.0');
 
 %% OPTIONS 
 
-logtrasform = true;         %log transform of features with heavy-tailed distribution
+logtrasform = true;         %log transform features with heavy-tailed distribution
 scale = true;               %min-max normalization
 norm_zscore = false;        %z-score normalization
 
-sparse_selection = false;    %perform Sparse Features Selection
-
 pca_exc = true;             %perform PCA 
-perc_pca = 80;              %perform PCA
+perc_pca = 80;              %variance percentage
+
+sparse_selection = false;   %perform Sparse Features Selection
 
 exec_SFS = false;           %perform Sequential forward selection (SFS) 
-exec_SBS = false;  
-score_mode = 'mean';
-%score_mode = 'var';
-load_featuresSFS = true;   %load the features selected with SFS
+exec_SBS = false;           %perform Sequential Backward Selection (SBS) 
+score_mode = 'mean';        %sequential selection criterion (mean, var)
+load_featuresSFS = true;    %load the features selected with SFS
 
 distance_mode = 'euclidean'; %Use Euclidean distance    
 %distance_mode = 'pearson';  %Use Pearson distance (1- Pearson correlation coefficient) 
 
-%data_process = 'before';   %process data before computing sigma 
-data_process = 'after';     %process data after computing sigma 
+%data_process = 'before';   %preprocessing data before computing sigma 
+data_process = 'after';     %preprocessing data after computing sigma 
 
-%kernel = 'scaled';   %scaled exponential similarity kernel "Similarity network fusion for aggregating data types on a genomic scale"
-kernel = 'adaptive';  %adaptive Gaussian kernel "MAGIC: A diffusion-based imputation method reveals gene-gene interactions in single-cell RNA-sequencing data"
-%kernel = 'hyperOCC'; %Hyperparameter for SE kernel "Hyperparameter Selection for Gaussian Process One-Class Classification"
+%kernel = 'scaled';         %Scaled exponential similarity kernel
+kernel = 'adaptive';        %Adaptive Gaussian kernel
+%kernel = 'hyperOCC';       %Hyperparameter Selection of Xiao et al.
 
-log_sigma = true;     %Sigma transform     
-KA_adaptive_kernel = 30;
+log_sigma = true;           %Log-trasform Sigma     
+k_adapt = 30;               %k of Adaptive kernel
+
+k_scaled = 30;              %k of Scaled kernel usually (10~30)
+mu_scaled = 0.8;            %hyperparameter, usually (0.3~0.8)
 
 %% Load Dataset 
 
@@ -48,8 +50,10 @@ if not(exist('V'))
     load('V.mat')
 end
 
+%Continuous features
 features = [2:42,44:46,48,52:71];
 
+%Features to log transform
 if logtrasform
     features_log = [2,3,7:10,41,42,44,45,46,48,58];
 else
@@ -81,7 +85,7 @@ for i=ia
     t_label(i) = 1;
 end
 
-%% Data processing
+%% Data pre-processing
 
 %Sequential forward selection (SFS)
 if load_featuresSFS
@@ -91,14 +95,6 @@ if load_featuresSFS
     t = t(:,sel_features);
 end
 
-
-%{
-load('/Users/anthony/Dropbox/tesi/gpml-matlab-master/doc/sel_features_sparse.mat');
-sel_features = repInd;
-x = x(:,sel_features);
-t = t(:,sel_features);
-%}
-
 if strcmp(data_process,'before')
     [x,t] = data_processing(x,t,scale,norm_zscore,sparse_selection,pca_exc,perc_pca);
 end
@@ -106,18 +102,17 @@ end
 if strcmp(kernel,'adaptive')
     
     if strcmp(distance_mode,'euclidean')
-        %ka = 30;
-        [idx, dist] = knnsearch(x, x, 'k', KA_adaptive_kernel);%,'Distance','jaccard');
+        [idx, dist] = knnsearch(x, x, 'k', k_adapt);
         if log_sigma
-            sigma = log(dist(:,KA_adaptive_kernel));
+            sigma = log(dist(:,k_adapt));
         else
-            sigma = dist(:,KA_adaptive_kernel);
+            sigma = dist(:,k_adapt);
         end     
     else %pearson distance
         dist=distance_pearson(x,x);
         dist = sort(dist,2);
-        %sigma = dist(:,KA_adaptive_kernel);
-        sigma = exp(dist(:,KA_adaptive_kernel));
+        %sigma = dist(:,k_adapt);
+        sigma = exp(dist(:,k_adapt));
     end
     
 end
@@ -128,11 +123,9 @@ end
 
 %Scaled Exponential Similarity Kernel
 if strcmp(kernel,'scaled')
-    k = 30;     %number of neighbors, usually (10~30)
-    mu = 0.6;   %hyperparameter, usually (0.3~0.8)
-    [~, dist] = knnsearch(x, x, 'k', k);
+    [~, dist] = knnsearch(x, x, 'k', k_scaled);
     dist_xn = mean(dist,2);
-    [~, dist] = knnsearch(x, t, 'k', k);
+    [~, dist] = knnsearch(x, t, 'k', k_scaled);
     dist_yn = mean(dist,2);
 end
 
@@ -164,7 +157,7 @@ svar = mean(svar);
 svar = 0.0045;
 
 if strcmp(kernel,'scaled')
-    [K,Ks,Kss]=scaled_exp_similarity_kernel(svar,x,t,dist_xn,dist_yn,mu);
+    [K,Ks,Kss]=scaled_exp_similarity_kernel(svar,x,t,dist_xn,dist_yn,mu_scaled);
 else %hyperOCC or adaptive
     if strcmp(distance_mode,'euclidean')
         [K,Ks,Kss]=se_kernel(svar,sigma,x,t,'euclidean');

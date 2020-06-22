@@ -6,8 +6,8 @@ delete myData.xls
 %% OPTIONS 
 
 logtrasform = false;         %log transform of features with heavy-tailed distribution
-scale = true;               %min-max normalization
-norm_zscore = false;        %z-score normalization
+scale = true;                %min-max normalization
+norm_zscore = false;         %z-score normalization
 
 sparse_selection = false;    %perform Sparse Features Selection
 
@@ -17,18 +17,22 @@ perc_pca = 80;              %perform PCA
 exec_SFS = false;           %perform Sequential forward selection (SFS) 
 load_featuresSFS = false;   %load the features selected with SFS
 
-%distance_mode = 'euclidean'; %Use Euclidean distance    
-distance_mode = 'pearson';  %Use Pearson distance (1- Pearson correlation coefficient) 
+%distance_mode = 'euclidean';%Use Euclidean distance    
+distance_mode = 'pearson';   %Use Pearson distance (1- Pearson correlation coefficient) 
 
-data_process = 'before';   %process data before computing sigma 
+data_process = 'before';     %process data before computing sigma 
 %data_process = 'after';     %process data after computing sigma 
 
-%kernel = 'scaled';   %scaled exponential similarity kernel "Similarity network fusion for aggregating data types on a genomic scale"
-kernel = 'adaptive';  %adaptive Gaussian kernel "MAGIC: A diffusion-based imputation method reveals gene-gene interactions in single-cell RNA-sequencing data"
-%kernel = 'hyperOCC'; %Hyperparameter for SE kernel "Hyperparameter Selection for Gaussian Process One-Class Classification"
+%kernel = 'scaled';         %scaled exponential similarity kernel "Similarity network fusion for aggregating data types on a genomic scale"
+kernel = 'adaptive';        %adaptive Gaussian kernel "MAGIC: A diffusion-based imputation method reveals gene-gene interactions in single-cell RNA-sequencing data"
+%kernel = 'hyperOCC';       %Hyperparameter for SE kernel "Hyperparameter Selection for Gaussian Process One-Class Classification"
 
-log_sigma = false;     %Sigma transform     
-KA_adaptive_kernel = 15;
+log_sigma = false;          %Sigma transform     
+
+k_adapt = 15;               %k of Adaptive kernel
+
+k_scaled = 30;              %k of Scaled kernel usually (10~30)
+mu_scaled = 0.8;            %hyperparameter, usually (0.3~0.8)
 
 %% Load Dataset 
 
@@ -36,25 +40,23 @@ tot_table = table();
 
 data_folder = dir('./UCI_OCC_DATASETS/');
 
-for j = 4:12 %[3:5,7:12,14,16:17] % %[3:5,8:11,16:17] 
+%for each UCI dataset 
+for j = 4:12 
     
     AUC_mean = [];
     AUC_var = [];
     AUC_pred = [];
     AUC_ratio = [];
     
-    j
     name = ['./UCI_OCC_DATASETS/',data_folder(j).name]
     load(name);
-    %load('./UCI_OCC_DATASETS/heart.mat') %heart
-    %load('./UCI_OCC_DATASETS/abalone.mat') %abalone
-    %load('./UCI_OCC_DATASETS/spambase.mat')  %Spambase
 
     dataset = x;
     
+    %iterations of dataset subdivision
     for i=1:20
 
-
+        
         class1 = [];
         class2 = [];
 
@@ -86,7 +88,7 @@ for j = 4:12 %[3:5,7:12,14,16:17] % %[3:5,8:11,16:17]
         n = size(x,1);
         y = [ones(1,n)]';
         
-        %KA_adaptive_kernel = floor((n/100)*2)
+        %k_adapt = floor((n/100)*2)
 
         t_label = [ones(1,size(testInd,2))';zeros(1,size(class2,1))'];
 
@@ -99,18 +101,6 @@ for j = 4:12 %[3:5,7:12,14,16:17] % %[3:5,8:11,16:17]
             x = x(:,sel_features);
             t = t(:,sel_features);
         end
-
-
-        %{
-        load('/Users/anthony/Dropbox/tesi/gpml-matlab-master/doc/sel_features_sparse.mat');
-        sel_features = repInd;
-        x = x(:,sel_features);
-        t = t(:,sel_features);
-        %}
-
-        %if norm_zscore
-
-        %end
         
         if strcmp(data_process,'before')
             [x,t] = data_processing(x,t,scale,norm_zscore,sparse_selection,pca_exc,perc_pca);
@@ -120,17 +110,17 @@ for j = 4:12 %[3:5,7:12,14,16:17] % %[3:5,8:11,16:17]
 
             if strcmp(distance_mode,'euclidean')
                 %ka = 30;
-                [idx, dist] = knnsearch(x, x, 'k', KA_adaptive_kernel);%,'Distance','jaccard');
+                [idx, dist] = knnsearch(x, x, 'k', k_adapt);%,'Distance','jaccard');
                 if log_sigma
-                    sigma = log(dist(:,KA_adaptive_kernel));
+                    sigma = log(dist(:,k_adapt));
                 else
-                    sigma = dist(:,KA_adaptive_kernel);
-                    %sigma = mean(dist(:,[2:KA_adaptive_kernel]),2);
+                    sigma = dist(:,k_adapt);
+                    %sigma = mean(dist(:,[2:k_adapt]),2);
                 end     
             else %pearson distance
                 dist=distance_pearson(x,x);
                 dist = sort(dist,2);
-                sigma = exp(dist(:,KA_adaptive_kernel));
+                sigma = exp(dist(:,k_adapt));
             end
 
         end
@@ -151,11 +141,9 @@ for j = 4:12 %[3:5,7:12,14,16:17] % %[3:5,8:11,16:17]
 
         %Scaled Exponential Similarity Kernel
         if strcmp(kernel,'scaled')
-            k = 30;     %number of neighbors, usually (10~30)
-            mu = 0.6;   %hyperparameter, usually (0.3~0.8)
-            [~, dist] = knnsearch(x, x, 'k', k);
+            [~, dist] = knnsearch(x, x, 'k', k_scaled);
             dist_xn = mean(dist,2);
-            [~, dist] = knnsearch(x, t, 'k', k);
+            [~, dist] = knnsearch(x, t, 'k', k_scaled);
             dist_yn = mean(dist,2);
         end
 
@@ -181,7 +169,7 @@ for j = 4:12 %[3:5,7:12,14,16:17] % %[3:5,8:11,16:17]
         svar = 0.000045;
         
         if strcmp(kernel,'scaled')
-            [K,Ks,Kss]=scaled_exp_similarity_kernel(svar,x,t,dist_xn,dist_yn,mu);
+            [K,Ks,Kss]=scaled_exp_similarity_kernel(svar,x,t,dist_xn,dist_yn,mu_scaled);
         else %hyperOCC or adaptive
             if strcmp(distance_mode,'euclidean')
                 [K,Ks,Kss]=se_kernel(svar,sigma,x,t,'euclidean');
@@ -205,13 +193,7 @@ for j = 4:12 %[3:5,7:12,14,16:17] % %[3:5,8:11,16:17]
             score=GPR_OCC(K,Ks,Kss,modes{i});
              
             [X,Y,~,AUC] = perfcurve(t_label,score,1);
-            %figure(i)
-            %plot(X,Y)
-            %xlabel('False positive rate') 
-            %ylabel('True positive rate')
-            %title(sprintf('ROC %s',titles{i}))
-            %text(0.75,0.1,sprintf('AUC=%0.4f',AUC),'FontSize',14);
-            AUC
+
             AUCs = [AUCs,AUC]; 
         end
 
