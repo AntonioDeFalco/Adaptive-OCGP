@@ -1,5 +1,21 @@
 function distmat=distance_pearson(varargin)
-    
+%
+% Syntax:       distmat=distance_pearson(varargin)
+%               
+% Inputs:       varargin: 
+%                             
+%               x sample
+%              
+%               y sample
+% 
+%               ls vector of lenght-scale hyperparameters (Optional for Adaptive Kernel) 
+%
+% Outputs:      distmat distance matrix
+%                              
+% Description:  Pearson distance (1- Pearson correlation coefficient)
+%                      
+% Author:       Antonio De Falco           
+%     
     x=varargin{1};
     y=varargin{2};
     

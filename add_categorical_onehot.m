@@ -1,4 +1,7 @@
-%One-hot encoding for categorical features
+% Description:  One-hot encoding for categorical features of Drug Target Dataset
+%                      
+% Author:       Antonio De Falco           
+%     
 
 function x=add_categorical_onehot(T,category_add)
     x = [];

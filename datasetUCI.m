@@ -1,3 +1,9 @@
+% Description:  testing on UCI datasets, comparing the proposed kernels and
+% implementation of the hyperparameter selection of Xiao et al.
+%
+% Author:       Antonio De Falco           
+% 
+
 addpath('./SMRS_v1.0');
 addpath('./GPR_OCC');
 

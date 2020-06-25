@@ -1,4 +1,7 @@
-%Frequency encoding for categorical features
+% Description:  Frequency encoding for categorical features of Drug Target Dataset
+%                      
+% Author:       Antonio De Falco           
+%     
 
 function x=add_categorical_frequency(T)
     x = [];

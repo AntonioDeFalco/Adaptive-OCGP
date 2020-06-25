@@ -1,6 +1,32 @@
 function [x_new,y_new]=data_processing(x,y,scale,norm_zscore,sparse_selection,pca_exc,perc_pca)
+%
+% Syntax:       [x_new,y_new]=data_processing(x,y,scale,norm_zscore,sparse_selection,pca_exc,perc_pca)
+%               
+% Inputs:       x is an (n x d) matrix of traning set containing n samples of d-dimensional
+%              
+%               t is an (n x d) matrix of test set containing n samples of d-dimensional 
+% 
+%               scale boolean value perform min-max normalization
+%
+%               norm_zscore boolean value perform z-score normalization
+%
+%               sparse_selection boolean value perform Sparse Features Selection
+%
+%               pca_exc boolean value perform PCA
+%
+%               perc_pca variance percentage
+%
+% Outputs:      x is an (n x d) matrix of data processed of traning set
+%              
+%               t is an (n x d) matrix of data processed test set
+%                              
+% Description:  Several dataset preprocessing methods the method returns the
+%               processed dataset data
+%                      
+% Author:       Antonio De Falco           
+% 
 
-    %% Normalize z-score
+    % Normalize z-score
 
     %
     %if norm_zscore
@@ -18,7 +44,7 @@ function [x_new,y_new]=data_processing(x,y,scale,norm_zscore,sparse_selection,pc
             y = Ztest;
     end
 
-    %%
+    %
     x_size = size(x,1);
     y_size = size(y,1);
     all = [x;y];
@@ -30,7 +56,7 @@ function [x_new,y_new]=data_processing(x,y,scale,norm_zscore,sparse_selection,pc
     end
 
           
-    %%
+    %
     if sparse_selection
 
         % input the regularization parameter
@@ -52,7 +78,7 @@ function [x_new,y_new]=data_processing(x,y,scale,norm_zscore,sparse_selection,pc
     
     end
 
-    %% PCA
+    % PCA
 
     if pca_exc
         [~,scoreTrain,~,~,explained,~] = pca(all);
@@ -70,7 +96,7 @@ function [x_new,y_new]=data_processing(x,y,scale,norm_zscore,sparse_selection,pc
         all = scoreTrain(:,1:idx);
     end
 
-    %%
+    %
 
     x_new = all(1:x_size,:);
     y_new = all(x_size+1:y_size+x_size,:);

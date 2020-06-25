@@ -1,3 +1,9 @@
+% Description:  testing of GPOCC with different selections of the
+% hyperparameter on DrugTarget dataset.
+%                     
+% Author:       Antonio De Falco           
+% 
+
 addpath('./gpocc');
 addpath('./SMRS_v1.0');
 

@@ -1,3 +1,9 @@
+% Description:  Reads data from the Drug Target dataset and log-trasform
+% heavy tailed features
+%                      
+% Author:       Antonio De Falco           
+%  
+
 function x=read_features(T,features,features_log)
     x = []
     

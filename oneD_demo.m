@@ -1,4 +1,8 @@
-%One dimensional example of different solutions
+% Description:  Simple 1-D example with different selections of the
+% hyperparameter
+%
+% Author:       Antonio De Falco           
+% 
 
 close all
 

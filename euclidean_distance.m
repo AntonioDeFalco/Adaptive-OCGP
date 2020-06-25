@@ -1,5 +1,21 @@
 function distmat=euclidean_distance(varargin)
-
+%
+% Syntax:       distmat=euclidean_distance(varargin)
+%               
+% Inputs:       varargin: 
+%                             
+%               x sample
+%              
+%               y sample
+% 
+%               ls vector of lenght-scale hyperparameters (Optional for Adaptive Kernel) 
+%
+% Outputs:      distmat distance matrix
+%                              
+% Description:  Euclidean distance
+%                      
+% Author:       Antonio De Falco           
+% 
     x=varargin{1};
     y=varargin{2};
     
