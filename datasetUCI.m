@@ -172,9 +172,9 @@ for j = 4:12
             [K,Ks,Kss]=scaled_exp_similarity_kernel(svar,x,t,dist_xn,dist_yn,mu_scaled);
         else %hyperOCC or adaptive
             if strcmp(distance_mode,'euclidean')
-                [K,Ks,Kss]=se_kernel(svar,sigma,x,t,'euclidean');
+                [K,Ks,Kss]=se_kernel_adaptive(svar,sigma,x,t,'euclidean');
             else %pearson distance
-                [K,Ks,Kss]=se_kernel(svar,sigma,x,t,'pearson');
+                [K,Ks,Kss]=se_kernel_adaptive(svar,sigma,x,t,'pearson');
             end
         end
 

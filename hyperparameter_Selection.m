@@ -1,6 +1,15 @@
-%Implementation of Xiao et al. "Hyperparameter  selection  for  gaussian processone-class classification". IEEE Transactions on Neural Networks and Learning Systems, 2015
-
 function sigma=hyperparameter_Selection(x)
+%
+% Syntax:       sigma=hyperparameter_Selection(x)
+%               
+% Inputs:       x is an (n x d) matrix of traning set containing n samples of d-dimensional            
+%                                
+% Outputs:      sigma hyperparameter selected
+%                              
+% Description:  Implementation of Xiao et al. "Hyperparameter  selection  for  gaussian processone-class classification". IEEE Transactions on Neural Networks and Learning Systems, 2015
+%                    
+% Author:       Antonio De Falco           
+% 
 
     n=size(x,1);
     k=ceil(5 * log(n));
@@ -75,10 +84,10 @@ function sigma=hyperparameter_Selection(x)
 
     for j=1:size(L,2)  
 
-        [K,Ks,Kss]=se_kernel(svar,L(j),interior_samples, ones(n,1),'euclidean');
+        [K,Ks,Kss]=se_kernel_adaptive(svar,L(j),interior_samples, ones(n,1),'euclidean');
         sigma_inter=GPR_OCC(K,Ks,Kss,'var');
         mu_inter=GPR_OCC(K,Ks,Kss,'mean');
-        [K,Ks,Kss]=se_kernel(svar,L(j),edge_samples, zeros(n,1),'euclidean');
+        [K,Ks,Kss]=se_kernel_adaptive(svar,L(j),edge_samples, zeros(n,1),'euclidean');
         sigma_edge=GPR_OCC(K,Ks,Kss,'var');
         mu_edge=GPR_OCC(K,Ks,Kss,'mean');
         

@@ -1,6 +1,6 @@
-function [K,Ks,Kss]=se_kernel(svar,ls,x,y,dist)
+function [K,Ks,Kss]=se_kernel_adaptive(svar,ls,x,y,dist)
 %
-% Syntax:       [K,Ks,Kss]=se_kernel(svar,ls,x,y,dist)
+% Syntax:       [K,Ks,Kss]=se_kernel_adaptive(svar,ls,x,y,dist)
 %               
 % Inputs:       svar signal variance hyperparameter is an (n x d) matrix of traning set containing n samples of d-dimensional
 %              

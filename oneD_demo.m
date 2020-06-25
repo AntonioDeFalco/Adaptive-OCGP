@@ -42,7 +42,7 @@ for i=1:5
     if i == 5
     [K,Ks,Kss]=scaled_exp_similarity_kernel(svar,x_obs,x_s,dist_xn,dist_yn,mu_scaled);
     else
-    [K,Ks,Kss]=se_kernel(svar,sigma,x_obs, x_s,'euclidean');
+    [K,Ks,Kss]=se_kernel_adaptive(svar,sigma,x_obs, x_s,'euclidean');
     end
         
     noise=0.01;

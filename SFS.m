@@ -1,5 +1,4 @@
 function sel_features=SFS(x,t,t_label,sigm,distance_mode,score_mode)
-
 %
 % Syntax:       sel_features=SFS(x,t,t_label,sigm,distance_mode,score_mode)
 %               
@@ -17,10 +16,11 @@ function sel_features=SFS(x,t,t_label,sigm,distance_mode,score_mode)
 %                                
 % Outputs:      sel_features vector of selected features
 %                              
-% Description:  Returns the column indexes corresponding to the selected features
+% Description:  Sequential forward selection (SFS), returns the column indexes corresponding to the selected features
 %                     
 % Author:       Antonio De Falco           
-%               
+% 
+
 x_old = x;
 t_old = t;
 
@@ -44,7 +44,7 @@ last_AUC = 0;
             
             svar = 0.0045;
 
-            [K,Ks,Kss]=se_kernel(svar,sigm,x,t,distance_mode);
+            [K,Ks,Kss]=se_kernel_adaptive(svar,sigm,x,t,distance_mode);
 
             score=GPR_OCC(K,Ks,Kss,score_mode);
             [X,Y,~,AUC] = perfcurve(t_label,score,1);
