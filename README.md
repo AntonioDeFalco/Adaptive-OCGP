@@ -9,6 +9,44 @@ Since the OCC problem does not allow the automatic selection of GP hyperparamete
 The proposed kernels are compared with an implementation (***hyperparameter_Selection.m***) of the best known method for the hyperparameter selection for OCC of Xiao et al. [2]. 
 The main problem addressed is the selection and prioritization of drug targets, the ***OCC.m*** script contains testing on DrugTarget dataset with which we get AUC 0.90.
 
+# Script Options 
+
+######Preprocessing
+*logtrasform                boolean value perform log transform of features with heavy-tailed distribution
+*scale                      boolean value performmin-max normalization
+*norm_zscore                boolean value performz-score normalization
+*pca_exc                    boolean value perform PCA 
+*perc_pca                   variance percentage
+
+######Feature Selection
+*sparse_selection = false;   boolean value perform Sparse Features Selection
+*exec_SFS = false;           boolean value perform Sequential forward selection (SFS) 
+*exec_SBS = false;           boolean value perform Sequential Backward Selection (SBS) 
+*score_mode                  sequential selection criterion ('mean' or 'var')
+*load_featuresSFS = true;    boolean value load features selected with SFS
+
+######Covariance Function
+*distance_mode
+    * 'euclidean' Use Euclidean distance    
+    * 'pearson'   Use Pearson distance (1- Pearson correlation coefficient) 
+
+* data_process:
+    * 'before'   Preprocessing data before computing hyperparameter 
+    * 'after'    Preprocessing data after computing hyperparameter 
+
+* kernel:
+    * 'scaled'         Scaled kernel
+    * 'adaptive'       Adaptive kernel
+    * 'hyperOCC'       Hyperparameter Selection of Xiao et al.
+
+######Adaptive kernel
+*log_sigma           boolean value perform log transform of hyperparameters     
+*k_adapt             k parameter of Adaptive kernel
+
+######Scaled kernel
+*k_scaled            k parameter of Scaled kernel usually (10~30)
+*mu_scaled           hyperparameter, usually (0.3~0.8)
+
 # UCI Benchmars 
 
 The ***datasetUCI.m*** script contains testing on UCI datasets downloaded from [url](http://homepage.tudelft.nl/n9d04/occ/index.html).
