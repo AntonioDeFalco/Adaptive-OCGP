@@ -1,0 +1,3 @@
+[submodule "gpocc"]
+	path = gpocc
+	url = https://github.com/erodner/gpocc.git

@@ -1,4 +1,4 @@
-addpath('./GPR_OCC');
+addpath('./gpocc');
 addpath('./SMRS_v1.0');
 
 %% OPTIONS 
