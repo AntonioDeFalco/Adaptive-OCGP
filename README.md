@@ -52,7 +52,7 @@ The main problem addressed is the selection and prioritization of drug targets, 
 The ***datasetUCI.m*** script contains testing on UCI datasets downloaded from [url](http://homepage.tudelft.nl/n9d04/occ/index.html).
 The following table shows AUC scores for mean and variance on UCI datasets. At left the results with Xiao et al. hyperparameter selection, on the right the results of our proposed method.
 
-|       |                Xiao               |      			Adaptive            |               Scaled              |
+|Dataset|                 |Xiao             |      			  | Adaptive        |                 |Scaled           |
 |-------|:---------------:|:---------------:|:---------------:|:---------------:|:---------------:|:---------------:|
 |       |      mean	      |  	  -var      |      mean	      |  	  -var      |      mean	      |  	  -var      |
 | Abal. |    **0,7894**   |    **0,7897**   |      0,7745     |      0,7428     |      0,7742     |      0,7092     |
@@ -65,6 +65,7 @@ The following table shows AUC scores for mean and variance on UCI datasets. At l
 | Vehi. |      0,5183     |      0,5714     | 	**0,7965**    | 	**0,8656**  |      0,6855     |      0,8187     |
 | Wave. |      0,7497     |      0,8004     |      0,7808     |     **0,8167**  |    **0,8024**   |      0,7998     |
 | Aver. |      0,7982     |      0,8169     | 	**0,8482**    | 	**0,8549**  |      0,8312     |      0,8455     |
+
 
 # 1-D OCC 
 
