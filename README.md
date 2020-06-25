@@ -40,30 +40,31 @@ The main problem addressed is the selection and prioritization of drug targets, 
     * *'hyperOCC'*:       Hyperparameter Selection of Xiao et al.
 
 ###### Adaptive kernel
-* ***log_sigma***           boolean value perform log transform of hyperparameters     
-* ***k_adapt***             k parameter of Adaptive kernel
+* ***log_sigma***:           boolean value perform log transform of hyperparameters     
+* ***k_adapt***:             k parameter of Adaptive kernel
 
 ###### Scaled kernel
-* ***k_scaled***            k parameter of Scaled kernel usually (10-30)
-* ***mu_scaled***           hyperparameter, usually (0.3-0.8)
+* ***k_scaled***:            k parameter of Scaled kernel usually (10-30)
+* ***mu_scaled***:           hyperparameter, usually (0.3-0.8)
 
 # UCI Benchmars 
 
 The ***datasetUCI.m*** script contains testing on UCI datasets downloaded from [url](http://homepage.tudelft.nl/n9d04/occ/index.html).
 The following table shows AUC scores for mean and variance on UCI datasets. At left the results with Xiao et al. hyperparameter selection, on the right the results of our proposed method.
 
-| Dataset    |XiaoSelection[2] (mean)|XiaoSelection[2] (variance)| AdaptiveKernel (mean)| AdaptiveKernel (variance)|
-|------------|:---------------------:|:-------------------------:|:--------------------:|:------------------------:|
-| Abalone    |         0,7894        |           0,7897          |        0,7745        |          0,7428          |
-| Balance    |         0,8366        |           0,8735          |        0,9468        |          0,9682          |
-| Biomed     |         0,8998        |           0,9036          |        0,9028        |          0,8960          |
-| Heart      |         0,8339        |           0,8379          |        0,8093        |          0,7925          |
-| Hepatitis  |         0,8378        |           0,8379          |        0,8006        |          0,7794          |
-| Housing    |         0,7917        |           0,7874          |        0,8677        |          0,8680          |
-| Ionosphere |         0,9265        |           0,9504          |        0,9550        |          0,9649          |
-| Vehicle    |         0,5183        |           0,5714          |        0,7965        |          0,8656          |
-| Waveform   |         0,7497        |           0,8004          |        0,7808        |          0,8167          |
-| AVERAGE    |         0,7982        |           0,8169          |        0,8482        |          0,8549          |
+|       |                Xiao               |      			Adaptive            |               Scaled              |
+|-------|:---------------:|:---------------:|:---------------:|:---------------:|:---------------:|:---------------:|
+|       |      mean	      |  	  -var      |      mean	      |  	  -var      |      mean	      |  	  -var      |
+| Abal. |    **0,7894**   |    **0,7897**   |      0,7745     |      0,7428     |      0,7742     |      0,7092     |
+| Bala. |      0,8366     |      0,8735     | 	**0,9468**    | 	**0,9682**  |      0,8657     |      0,9402     |
+| Biom. |      0,8998     |      0,9036     |      0,9028     |      0,8960     | 	**0,9073**    | 	**0,9117**  |
+| Hear. |      0,8339     | 	**0,8379**  |      0,8093     |      0,7925     | 	**0,8408**    |      0,8135     |
+| Hepa. | 	  **0,8378**  | 	**0,8379**  |      0,8006     |      0,7794     |      0,8242     |      0,7963     |
+| Hous. |      0,7917     |      0,7874     | 	**0,8677**    | 	**0,8680**  |      0,8107     |      0,8492     |
+| Iono. |      0,9265     |      0,9504     |      0,9550     |      0,9649     | 	**0,9697**    | 	**0,9712**  |
+| Vehi. |      0,5183     |      0,5714     | 	**0,7965**    | 	**0,8656**  |      0,6855     |      0,8187     |
+| Wave. |      0,7497     |      0,8004     |      0,7808     |     **0,8167**  |    **0,8024**   |      0,7998     |
+| Aver. |      0,7982     |      0,8169     | 	**0,8482**    | 	**0,8549**  |      0,8312     |      0,8455     |
 
 # 1-D OCC 
 
