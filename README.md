@@ -13,8 +13,8 @@ The main problem addressed is the selection and prioritization of drug targets, 
 
 ###### Preprocessing
 * ***logtrasform***:                boolean value perform log transform of features with heavy-tailed distribution
-* ***scale***:                      boolean value performmin-max normalization
-* ***norm_zscore***:                boolean value performz-score normalization
+* ***scale***:                      boolean value perform min-max normalization
+* ***norm_zscore***:                boolean value perform z-score normalization
 * ***pca_exc***:                    boolean value perform PCA 
 * ***perc_pca***:                   variance percentage
 
