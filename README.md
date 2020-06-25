@@ -38,3 +38,5 @@ The ***oneD_demo.m*** script contains a demo of the comparison in the case of a 
 [1] Michael Kemmler and Erik Rodner and Joachim Denzler: "One-Class Classification with Gaussian Processes", Proceedings of the 10th Asian Conference on Computer Vision, 2010.
 
 [2] Yingchao Xiao, Huangang Wang, and Wenli Xu: "Hyperparameter Selection for Gaussian Process One-Class Classification", IEEE Transactions on Neural Networks and Learning Systems, 2015.
+
+[2] E. Elhamifar, G. Sapiro, and R. Vidal: "Sparse Modeling for Finding Representative Objects", IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2012.
