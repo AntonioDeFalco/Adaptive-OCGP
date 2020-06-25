@@ -29,7 +29,9 @@ The following table shows AUC scores for mean and variance on UCI datasets. At l
 
 # 1-D OCC 
 
-The oneD_demo.m script contains a demo of the comparison in the case of a one-dimensional OCC setting, with a fixed hyperparameter and our proposed kernels.
+The ***oneD_demo.m*** script contains a demo of the comparison in the case of a one-dimensional OCC setting, with a fixed hyperparameter and our proposed kernels.
+
+![1-D example](https://github.com/AntonioDeFalco/DrugTarget-GPOCC/blob/master/all1D.png?raw=true)
 
 # Cite:
 
