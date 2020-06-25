@@ -29,8 +29,8 @@ distance_mode = 'euclidean'; %Use Euclidean distance
 %data_process = 'before';   %preprocessing data before computing sigma 
 data_process = 'after';     %preprocessing data after computing sigma 
 
-%kernel = 'scaled';         %Scaled exponential similarity kernel
-kernel = 'adaptive';        %Adaptive Gaussian kernel
+%kernel = 'scaled';         %Scaled kernel
+kernel = 'adaptive';        %Adaptive kernel
 %kernel = 'hyperOCC';       %Hyperparameter Selection of Xiao et al.
 
 log_sigma = true;           %Log-trasform Sigma     

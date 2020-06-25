@@ -29,12 +29,11 @@ distance_mode = 'pearson';   %Use Pearson distance (1- Pearson correlation coeff
 data_process = 'before';     %process data before computing sigma 
 %data_process = 'after';     %process data after computing sigma 
 
-%kernel = 'scaled';         %scaled exponential similarity kernel "Similarity network fusion for aggregating data types on a genomic scale"
-kernel = 'adaptive';        %adaptive Gaussian kernel "MAGIC: A diffusion-based imputation method reveals gene-gene interactions in single-cell RNA-sequencing data"
-%kernel = 'hyperOCC';       %Hyperparameter for SE kernel "Hyperparameter Selection for Gaussian Process One-Class Classification"
+%kernel = 'scaled';         %Scaled kernel
+kernel = 'adaptive';        %Adaptive kernel
+%kernel = 'hyperOCC';       %Hyperparameter Selection of Xiao et al.
 
 log_sigma = false;          %Sigma transform     
-
 k_adapt = 15;               %k of Adaptive kernel
 
 k_scaled = 30;              %k of Scaled kernel usually (10~30)
