@@ -3,8 +3,8 @@
 This repository contains an implementation of Gaussian Processes applied to a One Class Classification (OCC) problem, starting from Kemmler et al. [1].
 
 Since the OCC problem does not allow the automatic selection of GP hyperparameters, we propose two kernels that use not a hyperparameter with a fixed value but an adaptive hyperparameter, which varies for each sample and is automatically selected according to the distance of the training samples.
-    - Adaptive Kernel the hyperparameter is based on the distance of the training sample from its $k-th$ nearest training sample
-    - Scaled Kernel combines the distance between the samples with the average distance of the samples from their nearest.
+* Adaptive Kernel the hyperparameter is based on the distance of the training sample from its k-th nearest training sample
+* Scaled Kernel combines the distance between the samples with the average distance of the samples from their nearest.
 
 The proposed kernels are compared with an implementation (hyperparameter_Selection.m) of the best known method for the hyperparameter selection for OCC of Xiao et al. [2]. 
 The main problem addressed is the selection and prioritization of drug targets, the OCC.m script contains testing on DrugTarget dataset with which we get AUC 0.90.
