@@ -50,7 +50,7 @@ The main problem addressed is the selection and prioritization of drug targets, 
 # UCI Benchmars 
 
 The ***datasetUCI.m*** script contains testing on UCI datasets downloaded from [url](http://homepage.tudelft.nl/n9d04/occ/index.html).
-The following table shows AUC scores for mean and negative variance on UCI datasets. At left the results with Xiao et al. hyperparameter selection, on the right the results of our proposed method.
+The following table shows AUC scores for mean and negative variance on UCI datasets, comparing the proposed kernels and implementation of the hyperparameter selection of Xiao et al. [2].
 
 |Dataset   |    Xiao(mean)  |  Xiao(-var) |  Adapt.(mean) | Adapt.(-var)  |   Scaled(mean)  |   Scaled(-var)  |
 |----------|:--------------:|:------------:|:---------------:|:---------------:|:---------------:|:---------------:|
