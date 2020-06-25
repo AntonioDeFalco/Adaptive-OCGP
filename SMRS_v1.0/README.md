@@ -12,5 +12,4 @@ See All by Looking at A Few: Sparse Modeling for Finding Representative Objects,
 E. Elhamifar, G. Sapiro, and R. Vidal,
 IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2012.
 ------------------------------------------------------------------------------------------------------------------------------
-Please contact Ehsan Elhamifar (ehsan [At] cis [Dot] jhu [Dot] edu) for questions
-about the code.
+Please contact Ehsan Elhamifar (ehsan@cis.jhu.edu) for questions about the code.

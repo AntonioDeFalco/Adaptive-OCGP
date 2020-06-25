@@ -1,0 +1,6 @@
+This package contains functions that implement Principal Component Analysis (PCA) and Independent Component Analysis (ICA). 
+PCA and ICA are implemented as functions in this package, and multiple examples are included to demonstrate their use. 
+In PCA, multi-dimensional data is projected onto the singular vectors corresponding to a few of its largest singular values. Such an operation effectively decomposes the input single into orthogonal components in the directions of largest variance in the data. As a result, PCA is often used in dimensionality reduction applications, where performing PCA yields a low-dimensional representation of data that can be reversed to closely reconstruct the original data. 
+In ICA, multi-dimensional data is decomposed into components that are maximally independent in an appropriate sense (kurtosis and negentropy, in this package). ICA differs from PCA in that the low-dimensional signals do not necessarily correspond to the directions of maximum variance; rather, the ICA components have maximal statistical independence. In practice, ICA can often uncover disjoint underlying trends in multi-dimensional data.
+
+Brian Moore (2020). PCA and ICA Package (https://www.mathworks.com/matlabcentral/fileexchange/38300-pca-and-ica-package), MATLAB Central File Exchange. Retrieved June 25, 2020.

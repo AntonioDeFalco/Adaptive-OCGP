@@ -39,4 +39,6 @@ The ***oneD_demo.m*** script contains a demo of the comparison in the case of a 
 
 [2] Yingchao Xiao, Huangang Wang, and Wenli Xu: "Hyperparameter Selection for Gaussian Process One-Class Classification", IEEE Transactions on Neural Networks and Learning Systems, 2015.
 
-[2] E. Elhamifar, G. Sapiro, and R. Vidal: "Sparse Modeling for Finding Representative Objects", IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2012.
+[3] E. Elhamifar, G. Sapiro, and R. Vidal: "Sparse Modeling for Finding Representative Objects", IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2012.
+
+[4] Brian Moore (2020). PCA and ICA Package (https://www.mathworks.com/matlabcentral/fileexchange/38300-pca-and-ica-package), MATLAB Central File Exchange. Retrieved June 25, 2020.
