@@ -1,5 +1,26 @@
 function sel_features=SFS(x,t,t_label,sigm,distance_mode,score_mode)
 
+%
+% Syntax:       sel_features=SFS(x,t,t_label,sigm,distance_mode,score_mode)
+%               
+% Inputs:       x is an (n x d) matrix of traning set containing n samples of d-dimensional
+%              
+%               t is an (n x d) matrix of test set containing n samples of d-dimensional 
+%               
+%               t_label vector of labels of test set
+%                
+%               sigm vector of labels of test set
+%                
+%               distance_mode distance to be used in the covariance function
+%                
+%               score_mode criterion to optimize
+%                                
+% Outputs:      sel_features vector of selected features
+%                              
+% Description:  Returns the column indexes corresponding to the selected features
+%                     
+% Author:       Antonio De Falco           
+%               
 x_old = x;
 t_old = t;
 
