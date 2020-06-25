@@ -1,3 +1,6 @@
+# Description: One Class Logistic Regression on UCI Datasets.
+#
+# Author: Antonio De Falco
 
 install.packages("gelnet")
 install.packages("R.matlab")
@@ -11,8 +14,6 @@ require(pROC)
 require(gelnet)
 require(R.matlab)
 require(dgof)
-
-#file <- './UCI_OCC_DATASETS/balance.mat'
 
 files <- list.files(path="./UCI_OCC_DATASETS", pattern="*.mat", full.names=TRUE, recursive=FALSE)
 
