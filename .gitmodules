@@ -1,3 +1,6 @@
 [submodule "gpocc"]
 	path = gpocc
 	url = https://github.com/erodner/gpocc.git
+[submodule "SVDD"]
+	path = SVDD
+	url = https://github.com/iqiukp/SVDD
