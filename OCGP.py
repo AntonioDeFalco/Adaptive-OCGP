@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.neighbors import NearestNeighbors
 
 class OCGP():
 
@@ -24,24 +25,29 @@ class OCGP():
     def getGPRscore(self, modes):
 
         if modes == 'mean':
-            score = np.transpose(self.Ks) * self.alpha
+            score = score = np.dot(np.transpose(self.Ks),self.alpha)
 
         elif modes == 'var':
             v = np.linalg.solve(self.L, self.Ks)
-            score = -self.Kss + np.transpose(sum(np.multiply(v, v)))
+            score = [a + b for a, b in zip(-self.Kss, sum(np.multiply(v, v)))]
 
         elif modes == 'pred':
             v = np.linalg.solve(self.L, self.Ks)
-            var = self.Kss - np.transpose(sum(np.multiply(v, v)))
-            score = -0.5 * (np.divide((np.ones((np.size(var, 0), 1)) - np.power((np.transpose(self.Ks) * self.alpha), 2)), var + np.log(2 * np.pi * var)))
+            #var = self.Kss - np.transpose(sum(np.multiply(v, v)))
+            var = [a - b for a, b in zip(self.Kss, sum(np.multiply(v, v)))]
+            score = -0.5 * (np.divide((np.ones((np.size(var, 0), 1)) - np.power((np.dot(np.transpose(self.Ks),self.alpha)), 2)), var + np.log(np.multiply(2 * np.pi , var))))
 
         elif modes == 'ratio':
             v = np.linalg.solve(self.L, self.Ks)
-            score = np.divide(np.log((np.transpose(self.Ks) * self.alpha),np.sqrt(self.Kss - np.transpose(sum(np.multiply(v, v))))))
+            var = [a - b for a, b in zip(self.Kss, sum(np.multiply(v, v)))]
+            score = np.log(np.divide(np.dot(np.transpose(self.Ks),self.alpha),np.sqrt(var)))
 
         return score
 
-    def adaptiveKernel(self,svar,ls,x,y):
+    def adaptiveKernel(self,x,y,p):
+
+        svar = 0.000045
+        ls = self.knn(x,p)
         self.K = svar * np.exp(-0.5 * self.euclideanDistance(x, x, ls))
         self.K = (self.K + np.transpose(self.K))/2
         self.Ks = svar * np.exp(-0.5 * self.euclideanDistance(x, y, ls))
@@ -53,16 +59,26 @@ class OCGP():
         for i in range(0, np.size(x, 0)):
             for j in range(0,np.size(y, 0)):
                 buff = (x[i,:] - y[j,:])
-                #buff = buff / ls[i]
+                buff = buff / ls[i]
                 distmat[i, j] = np.dot(buff, buff)
         return distmat
-    """"
-    def knn(self):
-        [idx, dist] = knnsearch(x, x, 'k', k_adapt) #%, 'Distance', 'jaccard');
-        if log_sigma
-        sigma = log(dist(:,k_adapt));
-        else
-        sigma = dist(:, k_adapt);
 
+    def knn(self,data,k):
+
+        neigh = NearestNeighbors(n_neighbors=k)
+        neigh.fit(data)
+        dist = neigh.kneighbors(data, k)
+        ls = dist[0][:,1]
+
+        """"
+        [idx, dist] = knnsearch(x, x, 'k', k_adapt) #%, 'Distance', 'jaccard');
+        if log_sigma:
+            sigma = log(dist(:,k_adapt));
+        else:
+            sigma = dist(:, k_adapt);
+        """
+        return ls
+
+    """    
     def preprocessing(self):
     """
