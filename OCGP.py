@@ -44,17 +44,51 @@ class OCGP():
 
         return score
 
-    def adaptiveKernel(self,x,y,p):
+    def seKernel(self,x,y,ls):
 
         svar = 0.000045
-        ls = self.knn(x,p)
-        self.K = svar * np.exp(-0.5 * self.euclideanDistance(x, x, ls))
-        self.K = (self.K + np.transpose(self.K))/2
-        self.Ks = svar * np.exp(-0.5 * self.euclideanDistance(x, y, ls))
+        self.K = svar * np.exp(-0.5 * self.euclideanDistanceAdaptive(x, x)/ls)
+        self.Ks = svar * np.exp(-0.5 * self.euclideanDistanceAdaptive(x, y)/ls)
         self.Kss = svar * np.ones((np.size(y, 0), 1))
         self.GPR_OCC()
 
-    def euclideanDistance(self,x, y, ls):
+    def adaptiveKernel(self,x,y,p):
+
+        svar = 0.000045
+        dist = self.knn(x,p)
+        ls = dist[:, p - 1]
+        self.K = svar * np.exp(-0.5 * self.euclideanDistanceAdaptive(x, x, ls))
+        self.K = (self.K + np.transpose(self.K))/2
+        self.Ks = svar * np.exp(-0.5 * self.euclideanDistanceAdaptive(x, y, ls))
+        self.Kss = svar * np.ones((np.size(y, 0), 1))
+        self.GPR_OCC()
+
+    def scaledKernel(self,x,y,v,N):
+
+        svar = 0.000045
+
+        dist_xn = self.knn(x, N)
+        dist_yn = self.knn(y,N)
+        meanDist_xn = np.mean(dist_xn,1)
+        meanDist_yn = np.mean(dist_yn,1)
+        self.K = svar * np.exp(-0.5 * self.euclideanDistanceScaled(x, x, v, meanDist_xn,meanDist_xn))
+        self.Ks = svar * np.exp(-0.5 * self.euclideanDistanceScaled(x, y, v, meanDist_xn,meanDist_yn))
+        self.Kss = svar * np.ones((np.size(y, 0), 1))
+        self.GPR_OCC()
+
+    def euclideanDistanceScaled(self,x, y, v, meanDist_xn, meanDist_yn):
+        distmat = np.zeros((np.size(x, 0), np.size(y, 0)))
+        for i in range(0, np.size(x, 0)):
+            for j in range(0,np.size(y, 0)):
+                dist = (x[i, :] - y[j, :])
+                dist2 = np.dot(dist,dist)
+                dist = np.sqrt(dist2)
+                epsilon_ij = (meanDist_xn[i] + meanDist_yn[j] + dist) / 3
+                buff = np.divide(dist2 , (v * epsilon_ij))
+                distmat[i, j] = buff
+        return distmat
+
+    def euclideanDistanceAdaptive(self,x, y, ls):
         distmat = np.zeros((np.size(x, 0), np.size(y, 0)))
         for i in range(0, np.size(x, 0)):
             for j in range(0,np.size(y, 0)):
@@ -63,12 +97,20 @@ class OCGP():
                 distmat[i, j] = np.dot(buff, buff)
         return distmat
 
+    def euclideanDistance(self,x, y, ls):
+        distmat = np.zeros((np.size(x, 0), np.size(y, 0)))
+        for i in range(0, np.size(x, 0)):
+            for j in range(0,np.size(y, 0)):
+                buff = (x[i,:] - y[j,:])
+                distmat[i, j] = np.dot(buff, buff)
+        return distmat
+
     def knn(self,data,k):
 
         neigh = NearestNeighbors(n_neighbors=k)
         neigh.fit(data)
         dist = neigh.kneighbors(data, k)
-        ls = dist[0][:,1]
+
 
         """"
         [idx, dist] = knnsearch(x, x, 'k', k_adapt) #%, 'Distance', 'jaccard');
@@ -77,7 +119,7 @@ class OCGP():
         else:
             sigma = dist(:, k_adapt);
         """
-        return ls
+        return dist[0]
 
     """    
     def preprocessing(self):

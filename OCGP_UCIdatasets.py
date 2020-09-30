@@ -34,14 +34,19 @@ for name in onlyfiles:
         ocgp = OCGP.OCGP()
 
         p = 2
-        ocgp.adaptiveKernel(X_train,X_test,p)
+        #ocgp.adaptiveKernel(X_train,X_test,p)
+
+        v = 0.8
+        N = 5
+        ocgp.scaledKernel(X_train, X_test, v, N)
 
         modes = ['mean', 'var', 'pred', 'ratio']
 
         #for i in range(0,1):
-        i = 1
+        i = 0
         score = ocgp.getGPRscore(modes[i])
         fpr, tpr, thresholds = metrics.roc_curve(y_test, score)
+        #print(metrics.auc(fpr, tpr))
         AUCs = np.append(AUCs,metrics.auc(fpr, tpr))
 
     print(name)
