@@ -11,37 +11,42 @@ mypath = '/Users/antonio/Desktop/UCIdatasetpy/'
 onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 onlyfiles.sort()
 
-name = onlyfiles[0]
+AUCmeans = np.array([])
 
-data = loadmat(mypath+name)
-class1 = data["class1"]
-class2 = data["class2"]
+for name in onlyfiles:
 
-standard_scaler = StandardScaler()
-standard_scaler.fit(class1)
-class1 = standard_scaler.transform(class1)
-class2 = standard_scaler.transform(class2)
+    data = loadmat(mypath+name)
+    class1 = data["class1"]
+    class2 = data["class2"]
 
-X_train, X_test, y_train, y_test = train_test_split(class1, np.ones(np.size(class1,0)), test_size=0.20)
-y_test = np.concatenate([np.ones(np.size(X_test, 0)), np.zeros(np.size(class2, 0))])
-X_test = np.vstack([X_test, class2])
+    standard_scaler = StandardScaler()
+    standard_scaler.fit(class1)
+    class1 = standard_scaler.transform(class1)
+    class2 = standard_scaler.transform(class2)
 
-ocgp = OCGP.OCGP()
+    AUCs = np.array([])
 
-#x = np.array([[0.25,0.47,0.57,0.98,0.77,0.22],[0.22,0.88,0.55,0.44,0.22,0.01]])
-#y = np.array([[0.40,0.54,0.67,0.65,0.44,0.25],[0.42,0.55,0.88,0.77,0.44,0.11]])
+    for i in range(0, 20):
+        X_train, X_test, y_train, y_test = train_test_split(class1, np.ones(np.size(class1,0)), test_size=0.20)
+        y_test = np.concatenate([np.ones(np.size(X_test, 0)), np.zeros(np.size(class2, 0))])
+        X_test = np.vstack([X_test, class2])
 
-#x = np.random.rand(2, 3)
-#y = np.random.rand(2, 3)
-ls = np.random.rand(np.size(X_train, 0))
+        ocgp = OCGP.OCGP()
 
-svar = 0.000045;
+        p = 2
+        ocgp.adaptiveKernel(X_train,X_test,p)
 
-ocgp.adaptiveKernel(svar,ls,X_train,X_test)
+        modes = ['mean', 'var', 'pred', 'ratio']
 
-modes = ['mean', 'var', 'pred', 'ratio']
-score = ocgp.getGPRscore(modes[0])
-print(score)
+        #for i in range(0,1):
+        i = 1
+        score = ocgp.getGPRscore(modes[i])
+        fpr, tpr, thresholds = metrics.roc_curve(y_test, score)
+        AUCs = np.append(AUCs,metrics.auc(fpr, tpr))
 
-fpr, tpr, thresholds = metrics.roc_curve(y_test, score)
-print(metrics.auc(fpr, tpr))
+    print(name)
+    print(np.mean(AUCs))
+    AUCmeans = np.append(AUCmeans, np.mean(AUCs))
+
+print("Average")
+print(np.mean(AUCmeans))
