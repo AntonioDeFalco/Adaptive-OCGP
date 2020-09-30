@@ -37,7 +37,7 @@ for name in onlyfiles:
         #ocgp.adaptiveKernel(X_train,X_test,p)
 
         v = 0.8
-        N = 5
+        N = 4
         ocgp.scaledKernel(X_train, X_test, v, N)
 
         modes = ['mean', 'var', 'pred', 'ratio']
