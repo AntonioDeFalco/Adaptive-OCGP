@@ -66,7 +66,7 @@ def getAUC_OCGP_UCI(posSamples, negSamples, kernel,score,id,AUCs):
         ocgp.adaptiveKernel(X_train,X_test,p)
     elif kernel == "scaled":
         v = 0.8
-        N = 4
+        N = 5
         ocgp.scaledKernel(X_train, X_test, v, N)
 
     scores = ocgp.getGPRscore(score)

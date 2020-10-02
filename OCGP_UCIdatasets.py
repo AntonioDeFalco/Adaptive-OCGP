@@ -7,7 +7,7 @@ from scipy.io import loadmat
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
-mypath = '/Users/antonio/Desktop/UCIdatasetpy/'
+mypath = './UCIdatasetpy/'
 onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 onlyfiles.sort()
 
@@ -27,9 +27,14 @@ for name in onlyfiles:
     AUCs = np.array([])
 
     for i in range(0, 20):
-        X_train, X_test, y_train, y_test = train_test_split(class1, np.ones(np.size(class1,0)), test_size=0.20)
-        y_test = np.concatenate([np.ones(np.size(X_test, 0)), np.zeros(np.size(class2, 0))])
-        X_test = np.vstack([X_test, class2])
+        #X_train, X_test, y_train, y_test = train_test_split(class1, np.ones(np.size(class1,0)), test_size=0.20)
+        #y_test = np.concatenate([np.ones(np.size(X_test, 0)), np.zeros(np.size(class2, 0))])
+        #X_test = np.vstack([X_test, class2])
+
+        X_train = class1
+        y_train = np.ones(np.size(class1, 0))
+        X_test = class2
+        y_test = np.zeros(np.size(class2, 0))
 
         ocgp = OCGP.OCGP()
 
@@ -37,7 +42,7 @@ for name in onlyfiles:
         #ocgp.adaptiveKernel(X_train,X_test,p)
 
         v = 0.8
-        N = 4
+        N = 5
         ocgp.scaledKernel(X_train, X_test, v, N)
 
         modes = ['mean', 'var', 'pred', 'ratio']

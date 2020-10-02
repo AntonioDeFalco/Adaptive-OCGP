@@ -1,5 +1,7 @@
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
+import scipy
+from scipy.spatial import distance
 
 class OCGP():
 
@@ -68,7 +70,11 @@ class OCGP():
         svar = 0.000045
 
         dist_xn = self.knn(x, N)
-        dist_yn = self.knn(y,N)
+        #dist_yn = self.knn(y,N)
+        #dist_yn = distance.cdist(x, y)
+        dist_yn = distance.cdist(y, x) (as MATLAB)
+        dist_yn = np.sort(dist_yn, axis=1)
+        dist_yn = dist_yn[:, 0:N]
         meanDist_xn = np.mean(dist_xn,1)
         meanDist_yn = np.mean(dist_yn,1)
         self.K = svar * np.exp(-0.5 * self.euclideanDistanceScaled(x, x, v, meanDist_xn,meanDist_xn))
@@ -105,20 +111,11 @@ class OCGP():
                 distmat[i, j] = np.dot(buff, buff)
         return distmat
 
-    def knn(self,data,k):
+    def knn(self, data, k):
 
         neigh = NearestNeighbors(n_neighbors=k)
         neigh.fit(data)
         dist = neigh.kneighbors(data, k)
-
-
-        """"
-        [idx, dist] = knnsearch(x, x, 'k', k_adapt) #%, 'Distance', 'jaccard');
-        if log_sigma:
-            sigma = log(dist(:,k_adapt));
-        else:
-            sigma = dist(:, k_adapt);
-        """
         return dist[0]
 
     """    
