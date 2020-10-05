@@ -23,7 +23,7 @@ class AsyncFactory:
         self.pool.close()
         self.pool.join()
 
-def processDrug(mypath,kernel,score):
+def processDrug(mypath,kernel):
 
     data = loadmat(mypath)
 
@@ -51,17 +51,20 @@ def processDrug(mypath,kernel,score):
         meanDist_xn, meanDist_yn = ocgp.scaledHyper(X_train, X_test, N)
         ocgp.scaledKernel(X_train, X_test, v, N, meanDist_xn, meanDist_yn)
 
-    scores = ocgp.getGPRscore(score)
-    fpr, tpr, thresholds = metrics.roc_curve(Y_test, scores)
-    AUC = metrics.auc(fpr, tpr)
-    print(AUC)
+    scoreTypes = ['mean', 'var', 'pred', 'ratio']
+    print(kernel)
+    for scoreType in scoreTypes:
+        scores = ocgp.getGPRscore(scoreType)
+        fpr, tpr, thresholds = metrics.roc_curve(Y_test, scores)
+        AUC = metrics.auc(fpr, tpr)
+        print(scoreType,":",AUC)
 
 path = './DataDrugTarget/dataset.mat'
 
 kernels = ['adaptive', 'scaled']
-scores = ['mean', 'var']
+scores = ['mean', 'var','pred','ratio']
 
-processDrug(path, 'adaptive', 'mean')
+processDrug(path, 'scaled')
 
 """
 print(kernel)

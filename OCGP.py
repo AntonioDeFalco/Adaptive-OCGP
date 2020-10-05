@@ -12,6 +12,8 @@ class OCGP():
         self.Kss = []
         self.L = []
         self.alpha = []
+        self.v = []
+        self.var = []
 
     def GPR_OCC(self):
 
@@ -28,22 +30,27 @@ class OCGP():
     def getGPRscore(self, modes):
 
         if modes == 'mean':
-            score = score = np.dot(np.transpose(self.Ks),self.alpha)
+            score = np.dot(np.transpose(self.Ks),self.alpha)
 
         elif modes == 'var':
-            v = np.linalg.solve(self.L, self.Ks)
-            score = [a + b for a, b in zip(-self.Kss, sum(np.multiply(v, v)))]
+            if np.size(self.v) == 0:
+                self.v = np.linalg.solve(self.L, self.Ks)
+            score = [a + b for a, b in zip(-self.Kss, sum(np.multiply(self.v, self.v)))]
 
         elif modes == 'pred':
-            v = np.linalg.solve(self.L, self.Ks)
+            if np.size(self.v) == 0:
+                self.v = np.linalg.solve(self.L, self.Ks)
             #var = self.Kss - np.transpose(sum(np.multiply(v, v)))
-            var = [a - b for a, b in zip(self.Kss, sum(np.multiply(v, v)))]
-            score = -0.5 * (np.divide((np.ones((np.size(var, 0), 1)) - np.power((np.dot(np.transpose(self.Ks),self.alpha)), 2)), var + np.log(np.multiply(2 * np.pi , var))))
+            if np.size(self.var) == 0:
+                self.var = [a - b for a, b in zip(self.Kss, sum(np.multiply(self.v, self.v)))]
+            score = -0.5 * (np.divide((np.ones((np.size(self.var, 0), 1)) - np.power((np.dot(np.transpose(self.Ks), self.alpha)), 2)), self.var + np.log(np.multiply(2 * np.pi , self.var))))
 
         elif modes == 'ratio':
-            v = np.linalg.solve(self.L, self.Ks)
-            var = [a - b for a, b in zip(self.Kss, sum(np.multiply(v, v)))]
-            score = np.log(np.divide(np.dot(np.transpose(self.Ks),self.alpha),np.sqrt(var)))
+            if np.size(self.v) == 0:
+                self.v = np.linalg.solve(self.L, self.Ks)
+            if np.size(self.var) == 0:
+                self.var = [a - b for a, b in zip(self.Kss, sum(np.multiply(self.v, self.v)))]
+            score = np.log(np.divide(np.dot(np.transpose(self.Ks),self.alpha),np.sqrt(self.var)))
 
         return score
 
