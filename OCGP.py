@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.neighbors import NearestNeighbors
 import scipy
 from scipy.spatial import distance
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 class OCGP():
 
@@ -54,29 +55,18 @@ class OCGP():
         self.Kss = svar * np.ones((np.size(y, 0), 1))
         self.GPR_OCC()
 
-    def adaptiveKernel(self,x,y,p):
+    def adaptiveKernel(self,x,y,p,ls):
 
         svar = 0.000045
-        dist = self.knn(x,p)
-        ls = dist[:, p - 1]
         self.K = svar * np.exp(-0.5 * self.euclideanDistanceAdaptive(x, x, ls))
         self.K = (self.K + np.transpose(self.K))/2
         self.Ks = svar * np.exp(-0.5 * self.euclideanDistanceAdaptive(x, y, ls))
         self.Kss = svar * np.ones((np.size(y, 0), 1))
         self.GPR_OCC()
 
-    def scaledKernel(self,x,y,v,N):
+    def scaledKernel(self,x,y,v,N,meanDist_xn,meanDist_yn):
 
         svar = 0.000045
-
-        dist_xn = self.knn(x, N)
-        #dist_yn = self.knn(y,N)
-        #dist_yn = distance.cdist(x, y)
-        dist_yn = distance.cdist(y, x) (as MATLAB)
-        dist_yn = np.sort(dist_yn, axis=1)
-        dist_yn = dist_yn[:, 0:N]
-        meanDist_xn = np.mean(dist_xn,1)
-        meanDist_yn = np.mean(dist_yn,1)
         self.K = svar * np.exp(-0.5 * self.euclideanDistanceScaled(x, x, v, meanDist_xn,meanDist_xn))
         self.Ks = svar * np.exp(-0.5 * self.euclideanDistanceScaled(x, y, v, meanDist_xn,meanDist_yn))
         self.Kss = svar * np.ones((np.size(y, 0), 1))
@@ -112,12 +102,39 @@ class OCGP():
         return distmat
 
     def knn(self, data, k):
-
         neigh = NearestNeighbors(n_neighbors=k)
         neigh.fit(data)
         dist = neigh.kneighbors(data, k)
         return dist[0]
 
-    """    
-    def preprocessing(self):
-    """
+    def adaptiveHyper(self,x,p):
+        dist = self.knn(x,p)
+        ls = dist[:, p - 1]
+        return ls
+
+    def scaledHyper(self,x,y,N):
+        dist_xn = self.knn(x, N)
+        #dist_yn = self.knn(y,N)
+        #dist_yn = distance.cdist(x, y)
+        dist_yn = distance.cdist(y, x) #(as MATLAB)
+        dist_yn = np.sort(dist_yn, axis=1)
+        dist_yn = dist_yn[:, 0:N]
+        meanDist_xn = np.mean(dist_xn,1)
+        meanDist_yn = np.mean(dist_yn,1)
+        return meanDist_xn, meanDist_yn
+
+    def preprocessing(self,x,y,mode):
+
+        if mode == "minmax":
+            scaler = MinMaxScaler()
+            all = np.vstack([x, y])
+            scaler.fit(all)
+            all = scaler.transform(all)
+            x = all[0: np.size(x,0),:]
+            y = all[np.size(x,0):np.size(all),:]
+        elif mode == "zscore":
+            scaler = StandardScaler()
+            scaler.fit(x)
+            x = scaler.transform(x)
+            y = scaler.transform(y)
+        return x,y
