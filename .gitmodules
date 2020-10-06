@@ -1,5 +1,5 @@
 [submodule "gpocc"]
-	path = MatlabOCGP/gpocc
+	path = ./MatlabOCGP/gpocc
 	url = https://github.com/erodner/gpocc.git
 [submodule "SVDD"]
 	path = SVDD
