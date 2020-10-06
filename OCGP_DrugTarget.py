@@ -1,27 +1,7 @@
 import numpy as np
 import OCGP
-from os import listdir
-from os.path import isfile, join
 from sklearn import metrics
 from scipy.io import loadmat
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from sklearn.model_selection import train_test_split
-import threading
-from multiprocessing import Process, Pool, Manager
-
-class AsyncFactory:
-    def __init__(self, func):#, cb_func):
-        self.func = func
-        #self.cb_func = cb_func
-        self.pool = Pool()
-        self.pool = Pool()
-
-    def call(self, *args, **kwargs):
-        self.pool.apply_async(self.func, args, kwargs)#, self.cb_func)
-
-    def wait(self):
-        self.pool.close()
-        self.pool.join()
 
 def processDrug(mypath,kernel,scoreTypes):
 
@@ -68,30 +48,3 @@ scores = ['mean', 'var','pred','ratio']
 
 for kernel in kernels:
     processDrug(path, kernel,scores)
-
-"""
-print(kernel)
-print(score)
-print("datasets processing complete.")
-print(AUCmeans)
-
-print("Average")
-print(np.mean(AUCmeans))
-"""
-
-""" PARALLEL DATASETS
-manager = Manager()
-AUCmeans = manager.list()
-for i in range(numDatasets):
-    AUCmeans.append(0.0)
-
-
-async_UCI = AsyncFactory(processUCI)
-
-for id in range(0,np.size(onlyfiles)):
-    async_UCI.call(mypath,id,onlyfiles[id])#,AUCmeans)
-
-async_UCI.wait()
-"""
-
-
