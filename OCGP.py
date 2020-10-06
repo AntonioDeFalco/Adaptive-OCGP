@@ -59,8 +59,8 @@ class OCGP():
 
         #svar = 0.000045
         svar = 0.000045
-        self.K = svar * np.exp(-0.5 * self.euclideanDistanceAdaptive(x, x)/ls)
-        self.Ks = svar * np.exp(-0.5 * self.euclideanDistanceAdaptive(x, y)/ls)
+        self.K = svar * np.exp(-0.5 * self.euclideanDistance(x, x)/ls)
+        self.Ks = svar * np.exp(-0.5 * self.euclideanDistance(x, y)/ls)
         self.Kss = svar * np.ones((np.size(y, 0), 1))
         self.GPR_OCC()
 
@@ -104,7 +104,7 @@ class OCGP():
                 distmat[i, j] = np.dot(buff, buff)
         return distmat
 
-    def euclideanDistance(self,x, y, ls):
+    def euclideanDistance(self,x, y):
         distmat = np.zeros((np.size(x, 0), np.size(y, 0)))
         for i in range(0, np.size(x, 0)):
             for j in range(0,np.size(y, 0)):
