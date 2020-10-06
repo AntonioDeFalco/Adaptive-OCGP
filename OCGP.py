@@ -16,9 +16,8 @@ class OCGP():
         self.v = []
         self.var = []
 
-    def GPR_OCC(self):
+    def GPR_OCC(self, noise = 0.01):
 
-        noise = 0.01
         self.K = self.K + noise * np.eye(np.size(self.K,0),np.size(self.K,1))
         self.Kss = self.Kss + noise * np.ones((np.size(self.Kss, 0),np.size(self.Kss, 1)))
 
@@ -64,20 +63,16 @@ class OCGP():
         self.Kss = svar * np.ones((np.size(y, 0), 1))
         self.GPR_OCC()
 
-    def adaptiveKernel(self,x,y,p,ls):
+    def adaptiveKernel(self, x, y, p,ls, svar=0.0045):
 
-        #svar = 0.000045
-        svar = 0.0045
         self.K = svar * np.exp(-0.5 * self.euclideanDistanceAdaptive(x, x, ls))
         self.K = (self.K + np.transpose(self.K))/2
         self.Ks = svar * np.exp(-0.5 * self.euclideanDistanceAdaptive(x, y, ls))
         self.Kss = svar * np.ones((np.size(y, 0), 1))
         self.GPR_OCC()
 
-    def scaledKernel(self,x,y,v,N,meanDist_xn,meanDist_yn):
+    def scaledKernel(self,x,y,v,N,meanDist_xn,meanDist_yn, svar=0.0045):
 
-        #svar = 0.000045
-        svar = 0.0045
         self.K = svar * np.exp(-0.5 * self.euclideanDistanceScaled(x, x, v, meanDist_xn,meanDist_xn))
         self.Ks = svar * np.exp(-0.5 * self.euclideanDistanceScaled(x, y, v, meanDist_xn,meanDist_yn))
         self.Kss = svar * np.ones((np.size(y, 0), 1))
