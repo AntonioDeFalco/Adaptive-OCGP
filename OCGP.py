@@ -3,6 +3,7 @@ from sklearn.neighbors import NearestNeighbors
 import scipy
 from scipy.spatial import distance
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.decomposition import PCA
 
 class OCGP():
 
@@ -19,7 +20,7 @@ class OCGP():
 
         noise = 0.01
         self.K = self.K + noise * np.eye(np.size(self.K,0),np.size(self.K,1))
-        self.Kss = self.Kss + noise * np.ones((np.size(self.Kss,0),np.size(self.Kss,1)))
+        self.Kss = self.Kss + noise * np.ones((np.size(self.Kss, 0),np.size(self.Kss, 1)))
 
         self.L = np.linalg.cholesky(self.K)
         self.alpha = np.linalg.solve(np.transpose(self.L),(np.linalg.solve(self.L,np.ones((np.size(self.K,0),1)))))
@@ -43,7 +44,7 @@ class OCGP():
             #var = self.Kss - np.transpose(sum(np.multiply(v, v)))
             if np.size(self.var) == 0:
                 self.var = [a - b for a, b in zip(self.Kss, sum(np.multiply(self.v, self.v)))]
-            score = -0.5 * (np.divide((np.ones((np.size(self.var, 0), 1)) - np.power((np.dot(np.transpose(self.Ks), self.alpha)), 2)), self.var + np.log(np.multiply(2 * np.pi , self.var))))
+            score = -0.5 * (np.divide(np.power((np.ones((np.size(self.var, 0), 1))) - (np.dot(np.transpose(self.Ks), self.alpha)), 2), self.var) + np.log(np.multiply(2 * np.pi , self.var)))
 
         elif modes == 'ratio':
             if np.size(self.v) == 0:
@@ -56,6 +57,7 @@ class OCGP():
 
     def seKernel(self,x,y,ls):
 
+        #svar = 0.000045
         svar = 0.000045
         self.K = svar * np.exp(-0.5 * self.euclideanDistanceAdaptive(x, x)/ls)
         self.Ks = svar * np.exp(-0.5 * self.euclideanDistanceAdaptive(x, y)/ls)
@@ -64,7 +66,8 @@ class OCGP():
 
     def adaptiveKernel(self,x,y,p,ls):
 
-        svar = 0.000045
+        #svar = 0.000045
+        svar = 0.0045
         self.K = svar * np.exp(-0.5 * self.euclideanDistanceAdaptive(x, x, ls))
         self.K = (self.K + np.transpose(self.K))/2
         self.Ks = svar * np.exp(-0.5 * self.euclideanDistanceAdaptive(x, y, ls))
@@ -73,7 +76,8 @@ class OCGP():
 
     def scaledKernel(self,x,y,v,N,meanDist_xn,meanDist_yn):
 
-        svar = 0.000045
+        #svar = 0.000045
+        svar = 0.0045
         self.K = svar * np.exp(-0.5 * self.euclideanDistanceScaled(x, x, v, meanDist_xn,meanDist_xn))
         self.Ks = svar * np.exp(-0.5 * self.euclideanDistanceScaled(x, y, v, meanDist_xn,meanDist_yn))
         self.Kss = svar * np.ones((np.size(y, 0), 1))
@@ -130,7 +134,7 @@ class OCGP():
         meanDist_yn = np.mean(dist_yn,1)
         return meanDist_xn, meanDist_yn
 
-    def preprocessing(self,x,y,mode):
+    def preprocessing(self,x,y,mode,pca = False):
 
         if mode == "minmax":
             scaler = MinMaxScaler()
@@ -144,4 +148,12 @@ class OCGP():
             scaler.fit(x)
             x = scaler.transform(x)
             y = scaler.transform(y)
+
+        if pca == True:
+            all = np.vstack([x, y])
+            pca = PCA(n_components=0.80)
+            all = pca.fit_transform(all)
+            x = all[0: np.size(x,0),:]
+            y = all[np.size(x,0):np.size(all),:]
+
         return x,y
