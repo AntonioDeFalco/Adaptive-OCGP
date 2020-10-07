@@ -6,17 +6,15 @@ from sklearn import metrics
 from scipy.io import loadmat
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-import threading
-from multiprocessing import Process, Pool, Manager
+from multiprocessing import Pool, Manager
 
 class AsyncFactory:
-    def __init__(self, func):#, cb_func):
+    def __init__(self, func):
         self.func = func
-        #self.cb_func = cb_func
         self.pool = Pool()
 
     def call(self, *args, **kwargs):
-        self.pool.apply_async(self.func, args, kwargs)#, self.cb_func)
+        self.pool.apply_async(self.func, args, kwargs)
 
     def wait(self):
         self.pool.close()

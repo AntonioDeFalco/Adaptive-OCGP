@@ -7,13 +7,7 @@ from scipy.io import loadmat
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
-mypath = './UCIdatasetpy/'
-onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
-onlyfiles.sort()
-
-AUCmeans = np.array([])
-
-for name in onlyfiles:
+def processUCI(mypath,kernel,score,id,name,AUCmeans):
 
     data = loadmat(mypath+name)
     class1 = data["class1"]
@@ -24,39 +18,62 @@ for name in onlyfiles:
     class1 = standard_scaler.transform(class1)
     class2 = standard_scaler.transform(class2)
 
-    AUCs = np.array([])
+    numIter = 20
 
-    for i in range(0, 20):
-        #X_train, X_test, y_train, y_test = train_test_split(class1, np.ones(np.size(class1,0)), test_size=0.20)
-        #y_test = np.concatenate([np.ones(np.size(X_test, 0)), np.zeros(np.size(class2, 0))])
-        #X_test = np.vstack([X_test, class2])
+    AUCs = np.zeros(numIter)
 
-        X_train = class1
-        y_train = np.ones(np.size(class1, 0))
-        X_test = class2
-        y_test = np.zeros(np.size(class2, 0))
+    for id2 in range(0, numIter):
+        getAUC_OCGP_UCI(class1, class2, kernel, score, id2, AUCs)
 
-        ocgp = OCGP.OCGP()
+    print ("Completed Iterations of:",name)
+    AUCmeans[id] = np.mean(AUCs)
 
+
+def getAUC_OCGP_UCI(posSamples, negSamples, kernel,score,id,AUCs):
+
+    X_train, X_test, y_train, y_test = train_test_split(posSamples, np.ones(np.size(posSamples, 0)), test_size=0.20, random_state = id)
+    y_test = np.concatenate([np.ones(np.size(X_test, 0)), np.zeros(np.size(negSamples, 0))])
+    X_test = np.vstack([X_test, negSamples])
+
+    ocgp = OCGP.OCGP()
+    svar = 0.000045
+    if kernel == "adaptive":
         p = 2
-        #ocgp.adaptiveKernel(X_train,X_test,p)
-
+        X_train, X_test = ocgp.preprocessing(X_train, X_test, "zscore")
+        ls = ocgp.adaptiveHyper(X_train, p)
+        ocgp.adaptiveKernel(X_train, X_test, ls, svar)
+    elif kernel == "scaled":
         v = 0.8
         N = 5
-        ocgp.scaledKernel(X_train, X_test, v, N)
+        X_train, X_test = ocgp.preprocessing(X_train, X_test, "zscore")
+        meanDist_xn, meanDist_yn = ocgp.scaledHyper(X_train, X_test, N)
+        ocgp.scaledKernel(X_train, X_test, v, meanDist_xn, meanDist_yn, svar)
 
-        modes = ['mean', 'var', 'pred', 'ratio']
+    scores = ocgp.getGPRscore(score)
+    fpr, tpr, thresholds = metrics.roc_curve(y_test, scores)
+    AUC = metrics.auc(fpr, tpr)
+    AUCs[id] = AUC
 
-        #for i in range(0,1):
-        i = 0
-        score = ocgp.getGPRscore(modes[i])
-        fpr, tpr, thresholds = metrics.roc_curve(y_test, score)
-        #print(metrics.auc(fpr, tpr))
-        AUCs = np.append(AUCs,metrics.auc(fpr, tpr))
+mypath = './UCIdatasetpy/'
+onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+onlyfiles.sort()
 
-    print(name)
-    print(np.mean(AUCs))
-    AUCmeans = np.append(AUCmeans, np.mean(AUCs))
+numDatasets = np.size(onlyfiles)
 
-print("Average")
-print(np.mean(AUCmeans))
+AUCmeans = np.zeros(numDatasets)
+
+kernels = ['adaptive', 'scaled']
+scores = ['mean', 'var']
+
+for kernel in kernels:
+    for score in scores:
+        for id in range(0,np.size(onlyfiles)):
+            processUCI(mypath, kernel, score, id, onlyfiles[id], AUCmeans)
+
+        print(kernel)
+        print(score)
+        print("datasets processing complete.")
+        print(AUCmeans)
+
+        print("Average")
+        print(np.mean(AUCmeans))
