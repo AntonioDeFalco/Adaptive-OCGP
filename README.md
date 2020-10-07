@@ -21,14 +21,16 @@ The main problem addressed is the selection and prioritization of drug targets.
         pca = True
         X_train, X_test = ocgp.preprocessing(X_train, X_test, scaleType , pca)
 
-## Squared Exponential Kernel
+## Kernels
+
+### Squared Exponential Kernel
 - ls (lenght-scale hyperpameter)
  - signal variance (OPTIONAL)
  
         ls = 0.3
         ocgp.adaptiveKernel(X_train, X_test, ls)
 
-## Adaptive Kernel
+### Adaptive Kernel
 - p (number of neighbors considered to determine adaptive hyperparameters)
 - signal variance (OPTIONAL)
 
@@ -36,7 +38,7 @@ The main problem addressed is the selection and prioritization of drug targets.
         ls = ocgp.adaptiveHyper(X_train,p)
         ocgp.adaptiveKernel(X_train, X_test, ls)
     
-## Scaled Kernel
+### Scaled Kernel
 - v (usually in  [0.3, 0.8])
 - N (number of neighbors considered in the average)
 - signal variance (OPTIONAL)
@@ -54,7 +56,7 @@ The main problem addressed is the selection and prioritization of drug targets.
 
 # UCI Benchmars 
 
-The following table shows AUC scores for mean and negative variance on UCI datasets (downloaded from [url](http://homepage.tudelft.nl/n9d04/occ/index.html), comparing the proposed kernels and implementation of the hyperparameter selection of Xiao et al. [2].
+The following table shows AUC scores for mean and negative variance on UCI datasets (downloaded from [url](http://homepage.tudelft.nl/n9d04/occ/index.html)), comparing the proposed kernels and implementation of the hyperparameter selection of Xiao et al. [2].
 
 |Dataset   |    Xiao(mean)  |  Xiao(-var) |  Adapt.(mean) | Adapt.(-var)  |   Scaled(mean)  |   Scaled(-var)  |
 |----------|:--------------:|:------------:|:---------------:|:---------------:|:---------------:|:---------------:|
