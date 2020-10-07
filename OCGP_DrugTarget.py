@@ -39,7 +39,7 @@ def processDrug(mypath,kernel,scoreTypes):
         scores = ocgp.getGPRscore(scoreType)
         fpr, tpr, thresholds = metrics.roc_curve(Y_test, scores)
         AUC = metrics.auc(fpr, tpr)
-        print(scoreType,":",round(AUC,4))
+        print(scoreType, ":", round(AUC, 4))
 
 path = './DataDrugTarget/'
 
