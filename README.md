@@ -9,6 +9,43 @@ Since the OCC problem does not allow the automatic selection of GP hyperparamete
 The proposed kernels are compared with an implementation of the best known method for the hyperparameter selection for OCC of Xiao et al. [2]. 
 The main problem addressed is the selection and prioritization of drug targets.
 
+# Example of usage
+
+    ocgp = OCGP.OCGP()
+
+## Preprocessing of dataset
+Possible preprocessing ("minmax","zscore") and PCA
+    
+    scaleType = "minmax"
+    pca = True
+    X_train, X_test = ocgp.preprocessing(X_train, X_test, scaleType , pca)
+
+## Squared Exponential Kernel
+
+    ls = 0.3
+    ocgp.adaptiveKernel(X_train, X_test, ls)
+
+
+## Adaptive Kernel
+
+    p = 30
+    ls = ocgp.adaptiveHyper(X_train,p)
+    ocgp.adaptiveKernel(X_train, X_test, ls)
+    
+
+## Scaled Kernel
+
+    v = 0.8
+    N = 4
+    meanDist_xn, meanDist_yn = ocgp.scaledHyper(X_train, X_test, N)
+    ocgp.scaledKernel(X_train, X_test, v, meanDist_xn, meanDist_yn)
+
+## Get Scores
+Possible scores ("mean","var","pred","ratio")
+
+    scoreType = "mean"
+    scores = ocgp.getGPRscore(scoreType)
+
 # UCI Benchmars 
 
 The following table shows AUC scores for mean and negative variance on UCI datasets (downloaded from [url](http://homepage.tudelft.nl/n9d04/occ/index.html), comparing the proposed kernels and implementation of the hyperparameter selection of Xiao et al. [2].
