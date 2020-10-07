@@ -26,13 +26,13 @@ def processDrug(mypath,kernel,scoreTypes):
         ls = ocgp.adaptiveHyper(X_train,p)
         ls = np.log(ls)
         X_train, X_test = ocgp.preprocessing(X_train, X_test, "minmax",True)
-        ocgp.adaptiveKernel(X_train, X_test, p, ls, svar)
+        ocgp.adaptiveKernel(X_train, X_test, ls, svar)
     elif kernel == "scaled":
         v = 0.8
         N = 4
         X_train, X_test = ocgp.preprocessing(X_train, X_test, "minmax",True)
         meanDist_xn, meanDist_yn = ocgp.scaledHyper(X_train, X_test, N)
-        ocgp.scaledKernel(X_train, X_test, v, N, meanDist_xn, meanDist_yn, svar)
+        ocgp.scaledKernel(X_train, X_test, v, meanDist_xn, meanDist_yn, svar)
 
     print(kernel)
     for scoreType in scoreTypes:

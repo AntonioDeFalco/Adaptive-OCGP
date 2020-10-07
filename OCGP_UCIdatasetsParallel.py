@@ -65,13 +65,13 @@ def getAUC_OCGP_UCI(posSamples, negSamples, kernel,score,id,AUCs):
         p = 2
         X_train, X_test = ocgp.preprocessing(X_train, X_test, "zscore")
         ls = ocgp.adaptiveHyper(X_train, p)
-        ocgp.adaptiveKernel(X_train, X_test, p, ls, svar)
+        ocgp.adaptiveKernel(X_train, X_test, ls, svar)
     elif kernel == "scaled":
         v = 0.8
         N = 5
         X_train, X_test = ocgp.preprocessing(X_train, X_test, "zscore")
         meanDist_xn, meanDist_yn = ocgp.scaledHyper(X_train, X_test, N)
-        ocgp.scaledKernel(X_train, X_test, v, N, meanDist_xn, meanDist_yn, svar)
+        ocgp.scaledKernel(X_train, X_test, v, meanDist_xn, meanDist_yn, svar)
 
     scores = ocgp.getGPRscore(score)
     fpr, tpr, thresholds = metrics.roc_curve(y_test, scores)

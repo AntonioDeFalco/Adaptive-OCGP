@@ -24,9 +24,6 @@ class OCGP():
         self.L = np.linalg.cholesky(self.K)
         self.alpha = np.linalg.solve(np.transpose(self.L),(np.linalg.solve(self.L,np.ones((np.size(self.K,0),1)))))
 
-        #np.linalg.solve(B,b)
-        #np.linalg.lstsq(B,b)
-
     def getGPRscore(self, modes):
 
         if modes == 'mean':
@@ -40,7 +37,6 @@ class OCGP():
         elif modes == 'pred':
             if np.size(self.v) == 0:
                 self.v = np.linalg.solve(self.L, self.Ks)
-            #var = self.Kss - np.transpose(sum(np.multiply(v, v)))
             if np.size(self.var) == 0:
                 self.var = [a - b for a, b in zip(self.Kss, sum(np.multiply(self.v, self.v)))]
             score = -0.5 * (np.divide(np.power((np.ones((np.size(self.var, 0), 1))) - (np.dot(np.transpose(self.Ks), self.alpha)), 2), self.var) + np.log(np.multiply(2 * np.pi , self.var)))
@@ -54,16 +50,14 @@ class OCGP():
 
         return score
 
-    def seKernel(self,x,y,ls):
+    def seKernel(self,x, y, ls, svar=0.0045):
 
-        #svar = 0.000045
-        svar = 0.000045
         self.K = svar * np.exp(-0.5 * self.euclideanDistance(x, x)/ls)
         self.Ks = svar * np.exp(-0.5 * self.euclideanDistance(x, y)/ls)
         self.Kss = svar * np.ones((np.size(y, 0), 1))
         self.GPR_OCC()
 
-    def adaptiveKernel(self, x, y, p,ls, svar=0.0045):
+    def adaptiveKernel(self, x, y,ls, svar=0.0045):
 
         self.K = svar * np.exp(-0.5 * self.euclideanDistanceAdaptive(x, x, ls))
         self.K = (self.K + np.transpose(self.K))/2
@@ -71,7 +65,7 @@ class OCGP():
         self.Kss = svar * np.ones((np.size(y, 0), 1))
         self.GPR_OCC()
 
-    def scaledKernel(self,x,y,v,N,meanDist_xn,meanDist_yn, svar=0.0045):
+    def scaledKernel(self, x, y, v, meanDist_xn, meanDist_yn, svar=0.0045):
 
         self.K = svar * np.exp(-0.5 * self.euclideanDistanceScaled(x, x, v, meanDist_xn,meanDist_xn))
         self.Ks = svar * np.exp(-0.5 * self.euclideanDistanceScaled(x, y, v, meanDist_xn,meanDist_yn))
