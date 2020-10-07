@@ -1,5 +1,4 @@
-from src.svdd import SVDD
-from src.visualize import Visualization as draw
+from SVDD.src.svdd import SVDD
 from os import listdir
 from os.path import isfile, join
 from sklearn.preprocessing import StandardScaler
@@ -61,6 +60,3 @@ for name in onlyfiles:
 
 print("Average")
 print(np.mean(AUCmeans))
-    # visualize the results
-    #draw.testResult(svdd, distance)
-    #draw.testROC(testLabel, distance)

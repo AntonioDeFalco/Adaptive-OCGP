@@ -1,6 +1,5 @@
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
-import scipy
 from scipy.spatial import distance
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.decomposition import PCA
