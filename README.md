@@ -14,37 +14,43 @@ The main problem addressed is the selection and prioritization of drug targets.
     ocgp = OCGP.OCGP()
 
 ## Preprocessing of dataset
-Possible preprocessing ("minmax","zscore") and PCA
+- Possible preprocessing: "minmax","zscore" 
+- Optional PCA
     
-    scaleType = "minmax"
-    pca = True
-    X_train, X_test = ocgp.preprocessing(X_train, X_test, scaleType , pca)
+        scaleType = "minmax"
+        pca = True
+        X_train, X_test = ocgp.preprocessing(X_train, X_test, scaleType , pca)
 
 ## Squared Exponential Kernel
-
-    ls = 0.3
-    ocgp.adaptiveKernel(X_train, X_test, ls)
-
+- ls (lenght-scale hyperpameter)
+ - signal variance (OPTIONAL)
+ 
+        ls = 0.3
+        ocgp.adaptiveKernel(X_train, X_test, ls)
 
 ## Adaptive Kernel
+- p (number of neighbors considered to determine adaptive hyperparameters)
+- signal variance (OPTIONAL)
 
-    p = 30
-    ls = ocgp.adaptiveHyper(X_train,p)
-    ocgp.adaptiveKernel(X_train, X_test, ls)
+        p = 30
+        ls = ocgp.adaptiveHyper(X_train,p)
+        ocgp.adaptiveKernel(X_train, X_test, ls)
     
-
 ## Scaled Kernel
+- v (usually in  [0.3, 0.8])
+- N (number of neighbors considered in the average)
+- signal variance (OPTIONAL)
 
-    v = 0.8
-    N = 4
-    meanDist_xn, meanDist_yn = ocgp.scaledHyper(X_train, X_test, N)
-    ocgp.scaledKernel(X_train, X_test, v, meanDist_xn, meanDist_yn)
+        v = 0.8
+        N = 4
+        meanDist_xn, meanDist_yn = ocgp.scaledHyper(X_train, X_test, N)
+        ocgp.scaledKernel(X_train, X_test, v, meanDist_xn, meanDist_yn)
 
 ## Get Scores
-Possible scores ("mean","var","pred","ratio")
+- Possible scores: "mean","var","pred","ratio".
 
-    scoreType = "mean"
-    scores = ocgp.getGPRscore(scoreType)
+        scoreType = "mean"
+        scores = ocgp.getGPRscore(scoreType)
 
 # UCI Benchmars 
 
