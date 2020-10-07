@@ -7,7 +7,7 @@ from sklearn.svm import OneClassSVM
 from sklearn.preprocessing import StandardScaler
 from sklearn import metrics
 
-mypath = '/Users/antonio/Desktop/UCIdatasetpy/'
+mypath = './UCIdatasetpy/'
 onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 onlyfiles.sort()
 

@@ -8,7 +8,7 @@ from scipy.io import loadmat
 import numpy as np
 from sklearn import metrics
 
-mypath = '/Users/antonio/Desktop/UCIdatasetpy/'
+mypath = './UCIdatasetpy/'
 onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 onlyfiles.sort()
 
