@@ -1,6 +1,6 @@
-# Adaptive One-Class Gaussian Processes - Prioritization of Oncology Drug Targets
+# Adaptive One-Class Gaussian Processes (Prioritization of Oncology Drug Targets)
 
-This repository contains a Python implementation of Adaptive One-Class Gaussian Processes, starting from OCGP Kemmler et al. [1].
+Python implementation of Adaptive One-Class Gaussian Processes, starting from OCGP of Kemmler et al. [1].
 
 Since the OCC problem does not allow the automatic selection of GP hyperparameters, we propose two kernels that use not a hyperparameter with a fixed value but an adaptive hyperparameter, which varies for each sample and is automatically selected according to the distance of the training samples.
 * *Adaptive Kernel* the hyperparameter is based on the distance of the training sample from its k-th nearest training sample
