@@ -138,10 +138,9 @@ class OCGP():
             y = scaler.transform(y)
 
         if pca == True:
-            all = np.vstack([x, y])
             pca = PCA(n_components=0.80)
-            all = pca.fit_transform(all)
-            x = all[0: np.size(x,0),:]
-            y = all[np.size(x,0):np.size(all),:]
+            pca.fit(np.vstack([x, y]))
+            x = pca.transform(x)
+            y = pca.transform(y)
 
         return x,y
