@@ -73,8 +73,11 @@ The following table shows AUC scores for mean and negative variance on UCI datas
 
 
 # Cite:
+[1] Antonio de Falco, Zoltan Dezso, Francesco Ceccarelli, Angelo Ciaramella, and Michele Ceccarelli: "Adaptive One-Class Gaussian Processes Allow Accurate Prioritization of Oncology Drug Targets", 2020 (To appear)
 
-[1] Michael Kemmler and Erik Rodner and Joachim Denzler: "One-Class Classification with Gaussian Processes", Proceedings of the 10th Asian Conference on Computer Vision, 2010.
+[2] Zoltan Dezso and Michele Ceccarelli: "Machine  learning  prediction  of oncology drug targets based on protein and network properties", BMCBioinformatics, 2020.
 
-[2] Yingchao Xiao, Huangang Wang, and Wenli Xu: "Hyperparameter Selection for Gaussian Process One-Class Classification", IEEE Transactions on Neural Networks and Learning Systems, 2015.
+[3] Michael Kemmler and Erik Rodner and Joachim Denzler: "One-Class Classification with Gaussian Processes", Proceedings of the 10th Asian Conference on Computer Vision, 2010.
+
+[4] Yingchao Xiao, Huangang Wang, and Wenli Xu: "Hyperparameter Selection for Gaussian Process One-Class Classification", IEEE Transactions on Neural Networks and Learning Systems, 2015.
 
