@@ -14,7 +14,7 @@ The main problem addressed is the selection and prioritization of drug targets.
     ocgp = OCGP.OCGP()
 
 ## Preprocessing of dataset
-- Possible preprocessing: "minmax","zscore" 
+- Possible preprocessing: "minmax", "zscore" 
 - Optional PCA
     
         scaleType = "minmax"
@@ -49,7 +49,7 @@ The main problem addressed is the selection and prioritization of drug targets.
         ocgp.scaledKernel(X_train, X_test, v, meanDist_xn, meanDist_yn)
 
 ## Get Scores
-- Possible scores: "mean","var","pred","ratio".
+- Possible scores: "mean", "var", "pred", "ratio".
 
         scoreType = "mean"
         scores = ocgp.getGPRscore(scoreType)
